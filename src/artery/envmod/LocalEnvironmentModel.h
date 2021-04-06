@@ -100,6 +100,9 @@ public:
      */
     const TrackedObjects& allObjects() const { return mObjects; }
 
+    /**
+     * Get list of all sensors attached to this local entity
+     */
     const std::vector<Sensor*>& getSensors() const { return mSensors; }
 
 private:
