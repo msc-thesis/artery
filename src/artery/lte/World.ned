@@ -8,6 +8,7 @@ import lte.corenetwork.binder.LteBinder;
 import lte.corenetwork.nodes.eNodeB;
 import lte.epc.PgwStandardSimplified;
 import lte.world.radio.LteChannelControl;
+import artery.lte.TMC;
 
 network World extends artery.inet.World
 {
@@ -53,6 +54,12 @@ network World extends artery.inet.World
             @display("p=220,60;i=device/smallrouter");
         }
 
+        // biRouter: Router {
+        //     @display("p=1300,200;i=device/smallrouter");
+        // }
+
+        tmc: TMC;
+
     connections allowunconnected:
         for i = 0..numLteBaseStations-2 {
             eNodeB[i].x2++ <--> Eth10G <--> eNodeB[i+1].x2++;
@@ -64,4 +71,12 @@ network World extends artery.inet.World
 
         server.pppg++ <--> Eth10G <--> router.pppg++;
         router.pppg++ <--> Eth10G <--> pgw.filterGate;
+
+        router.pppg++ <--> Eth10G <--> tmc.pppg++;
+
+        // server.ethg++ <--> Eth10G <--> biRouter.ethg++;
+        
+        for i = 0..numRoadSideUnits-1 {
+            rsu[i].ethg++ <--> Eth10G <--> tmc.ethg++;
+        }
 }

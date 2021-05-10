@@ -73,7 +73,7 @@ module Car like INetworkNode
 
         middleware: VehicleMiddleware {
             parameters:
-                @display("p=250,100");
+                @display("p=150,25");
                 mobilityModule = ".mobility";
         }
 

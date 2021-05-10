@@ -138,10 +138,15 @@ if(TARGET ots)
 endif()
 
 if(TARGET lte)
-    # SimuLTE is a non-integral feature: add it to "artery" but not "core"
-    message(STATUS "Enable SimuLTE integration")
-    target_link_libraries(artery INTERFACE lte)
+# SimuLTE is a non-integral feature: add it to "artery" but not "core"
+message(STATUS "Enable SimuLTE integration")
+set_property(TARGET core APPEND PROPERTY SOURCES
+lte/VoIPBroadcast.cc
+)
+target_link_libraries(artery INTERFACE lte)
 endif()
+
+generate_opp_message(lte/VoipPacket.msg TARGET core)
 
 macro(add_artery_feature name)
     add_library(${name} SHARED ${ARGN})

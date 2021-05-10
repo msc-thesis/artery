@@ -5,7 +5,10 @@ import artery.networking.Vanetza;
 import artery.nic.IRadioDriver;
 import inet.node.inet.INetworkNode;
 import inet.linklayer.contract.IWirelessNic;
+import inet.linklayer.contract.IWiredNic;
 import inet.mobility.contract.IMobility;
+import inet.networklayer.contract.IRoutingTable;
+import inet.networklayer.contract.INetworkLayer;
 import inet.networklayer.common.InterfaceTable;
 
 module RSU like INetworkNode
@@ -15,10 +18,13 @@ module RSU like INetworkNode
         @networkNode;
         @labels(node,ethernet-node,wireless-node);
         int numRadios = default(1);
+        string networkLayerType = default("IPv4NetworkLayer");
         bool withAntennaMobility = default(false);
         *.interfaceTableModule = default(absPath(".interfaceTable"));
         mobility.visualRepresentation = "^";
-
+        networkLayer.proxyARP = default(false);
+        string routingTableType = default("IPv4RoutingTable");
+        *.routingTableModule = default(routingTableType != "" ? absPath(".routingTable") : "");
     gates:
         input radioIn[numRadios] @directIn;
         inout pppg[] @labels(PPPFrame-conn);
@@ -35,6 +41,23 @@ module RSU like INetworkNode
                 @display("p=216,406,row,60;q=queue");
                 radio.antenna.mobilityModule = withAntennaMobility ?
                     ".antennaMobility[" + string(index) + "]" : ".mobility";
+        }
+
+        // network layer
+        networkLayer: <networkLayerType> like INetworkLayer {
+            parameters:
+                @display("p=329,287;q=queue");
+        }
+
+        // routing table
+        routingTable: <routingTableType> like IRoutingTable if routingTableType != "" {
+            parameters:
+                @display("p=53,250;is=s");
+        }
+
+        eth[sizeof(ethg)]: <default("EthernetInterface")> like IWiredNic {
+            parameters:
+                @display("p=368,406,row,60;q=txQueue");
         }
 
         antennaMobility[numRadios]: AntennaMobility if withAntennaMobility == true {
@@ -70,7 +93,7 @@ module RSU like INetworkNode
                 @display("p=50,100");
         }
 
-    connections:
+    connections allowunconnected:
         for i=0..sizeof(radioIn)-1 {
             radioIn[i] --> { @display("m=s"); } --> wlan[i].radioIn;
 
@@ -79,5 +102,14 @@ module RSU like INetworkNode
 
             radioDriver[i].upperLayer <--> vanetza[i].radioDriverData;
             radioDriver[i].properties --> vanetza[i].radioDriverProperties;
+
+            // wlan[i].upperLayerOut --> networkLayer.ifIn++;
+            // wlan[i].upperLayerIn <-- networkLayer.ifOut++;
+        }
+
+        for i=0..sizeof(ethg)-1 {
+            ethg[i] <--> { @display("m=s"); } <--> eth[i].phys;
+            eth[i].upperLayerOut --> networkLayer.ifIn++;
+            eth[i].upperLayerIn <-- networkLayer.ifOut++;
         }
 }
