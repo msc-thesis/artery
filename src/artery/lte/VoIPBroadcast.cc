@@ -165,7 +165,7 @@ void VoIPBroadcast::selectPeriodTime()
 void VoIPBroadcast::sendVoIPPacket()
 {
     GeoNetPacket* gn = new GeoNetPacket("GeoNet packet");
-    VoipPacket* packet = new VoipPacket("Hoeh");
+    VoipPacket* packet = new VoipPacket("GeoNet inside");
     packet->encapsulate(gn);
     packet->setIDtalk(iDtalk_ - 1);
     packet->setNframes(nframes_);
