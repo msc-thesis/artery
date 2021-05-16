@@ -16,6 +16,7 @@
 #include "artery/lte/VoipPacket_m.h"
 #include "inet/transportlayer/contract/udp/UDPSocket.h"
 #include "inet/networklayer/common/L3AddressResolver.h"
+#include "artery/networking/GeoNetPacket.h"
 
 namespace artery
 {
@@ -59,9 +60,7 @@ class VoIPBroadcast : public cSimpleModule
     inet::L3Address destAddress_;
 
     void initTraffic();
-    void talkspurt(simtime_t dur);
-    void selectPeriodTime();
-    void sendVoIPPacket();
+    void sendVoIPPacket(GeoNetPacket* p = nullptr);
 
   public:
     ~VoIPBroadcast();

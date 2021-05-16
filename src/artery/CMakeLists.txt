@@ -138,11 +138,12 @@ if(TARGET ots)
 endif()
 
 if(TARGET lte)
-# SimuLTE is a non-integral feature: add it to "artery" but not "core"
-message(STATUS "Enable SimuLTE integration")
-set_property(TARGET core APPEND PROPERTY SOURCES
-lte/VoIPBroadcast.cc
-)
+    # SimuLTE is a non-integral feature: add it to "artery" but not "core"
+    message(STATUS "Enable SimuLTE integration")
+    set_property(TARGET core APPEND PROPERTY SOURCES
+    lte/VoIPBroadcast.cc
+    adasapp/collector/CamReporter.cc
+    )
 target_link_libraries(artery INTERFACE lte)
 endif()
 

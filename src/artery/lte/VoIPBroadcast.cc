@@ -64,6 +64,11 @@ void VoIPBroadcast::initialize(int stage)
     warmUpPer_ = getSimulation()->getWarmupPeriod();
     voIPGeneratedThroughtput_ = registerSignal("voIPGeneratedThroughput");
 
+    EV << "VoIPBroadcast::initialize - binding to port: local:" << localPort_ << endl;
+
+    socket.setOutputGate(gate("udpOut"));
+    socket.bind(localPort_);
+
     initTraffic_ = new cMessage("initTraffic");
     initTraffic();
 }
@@ -72,12 +77,21 @@ void VoIPBroadcast::handleMessage(cMessage *msg)
 {
     if (msg->isSelfMessage())
     {
-        if (!strcmp(msg->getName(), "selfSender"))
-            sendVoIPPacket();
-        else if (!strcmp(msg->getName(), "selfSource"))
-            selectPeriodTime();
-        else
-            initTraffic();
+    //     if (!strcmp(msg->getName(), "selfSender"))
+    //         sendVoIPPacket();
+    //     else if (!strcmp(msg->getName(), "selfSource"))
+    //         selectPeriodTime();
+    //     else
+            // initTraffic();
+    } else {
+        const char* destAddress = par("destAddress").stringValue();
+        cModule* destModule = getModuleByPath(destAddress);
+        
+
+        if (destModule != nullptr) {
+            destAddress_ = inet::L3AddressResolver().resolve(destAddress);
+            sendVoIPPacket(dynamic_cast<GeoNetPacket*>(msg));
+        }
     }
 }
 
@@ -99,8 +113,8 @@ void VoIPBroadcast::initTraffic()
         delete initTraffic_;
 
         destAddress_ = inet::L3AddressResolver().resolve(destAddress);
-        socket.setOutputGate(gate("udpOut"));
-        socket.bind(localPort_);
+        // socket.setOutputGate(gate("udpOut"));
+        // socket.bind(localPort_);
 
         EV << simTime() << "VoIPBroadcast::initialize - binding to port: local:" << localPort_ << " , dest: " << destAddress_.str() << ":" << destPort_ << endl;
 
@@ -116,64 +130,22 @@ void VoIPBroadcast::initTraffic()
     }
 }
 
-void VoIPBroadcast::talkspurt(simtime_t dur)
-{
-    iDtalk_++;
-    nframes_ = (ceil(dur / sampling_time));
-
-    // a talkspurt must be at least 1 frame long
-    if (nframes_ == 0)
-        nframes_ = 1;
-
-    EV << "VoIPBroadcast::talkspurt - TALKSPURT[" << iDtalk_-1 << "] - Will be created[" << nframes_ << "] frames\n\n";
-
-    iDframe_ = 0;
-    nframesTmp_ = nframes_;
-    scheduleAt(simTime(), selfSender_);
-}
-
-void VoIPBroadcast::selectPeriodTime()
-{
-    if (!isTalk_)
-    {
-        double durSil2;
-        if(silences_)
-        {
-            durSil_ = weibull(scaleSil_, shapeSil_);
-            durSil2 = round(SIMTIME_DBL(durSil_)*1000) / 1000;
-        }
-        else
-        {
-            durSil_ = durSil2 = 0;
-        }
-
-        EV << "VoIPBroadcast::selectPeriodTime - Silence Period: " << "Duration[" << durSil_ << "/" << durSil2 << "] seconds\n";
-        scheduleAt(simTime() + durSil_, selfSource_);
-        isTalk_ = true;
-    }
-    else
-    {
-        durTalk_ = weibull(scaleTalk_, shapeTalk_);
-        double durTalk2 = round(SIMTIME_DBL(durTalk_)*1000) / 1000;
-        EV << "VoIPBroadcast::selectPeriodTime - Talkspurt[" << iDtalk_ << "] - Duration[" << durTalk_ << "/" << durTalk2 << "] seconds\n";
-        talkspurt(durTalk_);
-        scheduleAt(simTime() + durTalk_, selfSource_);
-        isTalk_ = false;
-    }
-}
-
-void VoIPBroadcast::sendVoIPPacket()
+void VoIPBroadcast::sendVoIPPacket(GeoNetPacket* p)
 {
     GeoNetPacket* gn = new GeoNetPacket("GeoNet packet");
+    // if (p)
+    //     gn = p;
+
     VoipPacket* packet = new VoipPacket("GeoNet inside");
-    packet->encapsulate(gn);
+    packet->encapsulate(p);
     packet->setIDtalk(iDtalk_ - 1);
     packet->setNframes(nframes_);
     packet->setIDframe(iDframe_);
     packet->setTimestamp(simTime());
     packet->setByteLength(size_);
     EV << "VoIPBroadcast::sendVoIPPacket - Talkspurt[" << iDtalk_-1 << "] - Sending frame[" << iDframe_ << "]\n";
-
+    EV << destAddress_ << endl;
+    EV << destPort_ << endl;
     socket.sendTo(packet, destAddress_, destPort_);
     --nframesTmp_;
     ++iDframe_;

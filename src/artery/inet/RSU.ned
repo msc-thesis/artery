@@ -10,6 +10,7 @@ import inet.mobility.contract.IMobility;
 import inet.networklayer.contract.IRoutingTable;
 import inet.networklayer.contract.INetworkLayer;
 import inet.networklayer.common.InterfaceTable;
+import artery.adasapp.collector.CamReporter;
 
 module RSU like INetworkNode
 {
@@ -83,6 +84,11 @@ module RSU like INetworkNode
                 router.isMobile = false;
         }
 
+        camReporter: CamReporter {
+            parameters:
+                @display("p=280,287");
+        }
+
         mobility: <default("inet.mobility.static.StationaryMobility")> like IMobility {
             parameters:
                 @display("p=53,200");
@@ -97,8 +103,15 @@ module RSU like INetworkNode
         for i=0..sizeof(radioIn)-1 {
             radioIn[i] --> { @display("m=s"); } --> wlan[i].radioIn;
 
-            wlan[i].upperLayerOut --> radioDriver[i].lowerLayerIn;
-            wlan[i].upperLayerIn <-- radioDriver[i].lowerLayerOut;
+            // wlan[i].upperLayerOut --> radioDriver[i].lowerLayerIn;
+            // wlan[i].upperLayerIn <-- radioDriver[i].lowerLayerOut;
+
+            camReporter.socketIn2 <-- wlan[i].upperLayerOut;
+            radioDriver[i].lowerLayerIn <-- camReporter.socketOut2;
+
+            radioDriver[i].lowerLayerOut --> camReporter.socketIn;
+            camReporter.wlanOut --> wlan[i].upperLayerIn;
+            camReporter.ethOut --> networkLayer.transportIn++;
 
             radioDriver[i].upperLayer <--> vanetza[i].radioDriverData;
             radioDriver[i].properties --> vanetza[i].radioDriverProperties;
