@@ -71,21 +71,18 @@ void CamReporter::receiveSignal(cComponent*, simsignal_t sig, cObject* obj, cObj
 
 void CamReporter::handleMessage(cMessage *msg) {
     if (msg->getArrivalGate() == socketIn) {
-        auto* copy1 = msg->dup();
-        VanetTxControl* ctrl = dynamic_cast<VanetTxControl*>(msg->getControlInfo());
-        copy1->setControlInfo(ctrl);
-        send(copy1, wlanOut);
+        send(msg, wlanOut);
 
         inet::IPv4ControlInfo* ipCtrl = new inet::IPv4ControlInfo();
         ipCtrl->setDestAddr(inet::L3AddressResolver().resolve(par("centralAddress").stringValue()).toIPv4());
         ipCtrl->setProtocol(inet::IP_PROT_UDP);
         ipCtrl->setTimeToLive(1);
         
-        auto* copy2 = msg->dup();
-        copy2->setName("From RSU");
+        auto* ethCopy = msg->dup();
+        ethCopy->setName("From RSU");
         inet::UDPPacket* packet = new inet::UDPPacket("UDP from RSU");
         packet->setDestinationPort(par("centralPort"));
-        packet->encapsulate((cPacket*)copy2);
+        packet->encapsulate((cPacket*)ethCopy);
         packet->setControlInfo(ipCtrl);
         send(packet, ethOut);
         
