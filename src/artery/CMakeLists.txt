@@ -142,6 +142,7 @@ if(TARGET lte)
     message(STATUS "Enable SimuLTE integration")
     set_property(TARGET core APPEND PROPERTY SOURCES
     lte/VoIPBroadcast.cc
+    lte/MyVoIPReceiver.cc
     adasapp/collector/CamReporter.cc
     )
 target_link_libraries(artery INTERFACE lte)
