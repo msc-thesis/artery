@@ -27,31 +27,9 @@ class MyVoIPReceiver : public cSimpleModule
 
     ~MyVoIPReceiver();
 
-    int emodel_Ie_;
-    int emodel_Bpl_;
-    int emodel_A_;
-    double emodel_Ro_;
-
-    typedef std::list<VoipPacket*> PacketsList;
-    PacketsList mPacketsList_;
-    PacketsList mPlayoutQueue_;
-    unsigned int mCurrentTalkspurt_;
-    unsigned int mBufferSpace_;
-    simtime_t mSamplingDelta_;
-    simtime_t mPlayoutDelay_;
-
-    bool mInit_;
-
     unsigned int totalRcvdBytes_;
     simtime_t warmUpPer_;
 
-    simsignal_t voIPFrameLossSignal_;
-    simsignal_t voIPFrameDelaySignal_;
-    simsignal_t voIPPlayoutDelaySignal_;
-    simsignal_t voIPMosSignal_;
-    simsignal_t voIPTaildropLossSignal_;
-    simsignal_t voIPPlayoutLossSignal_;
-    simsignal_t voIPJitterSignal_;
     simsignal_t voIPReceivedThroughput_;
 
     virtual void finish();
@@ -61,8 +39,6 @@ class MyVoIPReceiver : public cSimpleModule
     virtual int numInitStages() const { return inet::NUM_INIT_STAGES; }
     void initialize(int stage);
     void handleMessage(cMessage *msg);
-    double eModel(simtime_t delay, double loss);
-    void playout(bool finish);
 };
 
 }
