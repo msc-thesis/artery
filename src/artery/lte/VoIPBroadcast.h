@@ -26,23 +26,11 @@ class VoIPBroadcast : public cSimpleModule
     inet::UDPSocket socket;
 
     //source
-    simtime_t durTalk_;
-    simtime_t durSil_;
-    double scaleTalk_;
-    double shapeTalk_;
-    double scaleSil_;
-    double shapeSil_;
-    bool isTalk_;
     cMessage* selfSource_;
     //sender
-    int iDtalk_;
-    int nframes_;
-    int iDframe_;
     int nframesTmp_;
     int size_;
     simtime_t sampling_time;
-
-    bool silences_;
 
     unsigned int totalSentBytes_;
     simtime_t warmUpPer_;
@@ -54,7 +42,6 @@ class VoIPBroadcast : public cSimpleModule
 
     cMessage *initTraffic_;
 
-    simtime_t timestamp_;
     int localPort_;
     int destPort_;
     inet::L3Address destAddress_;

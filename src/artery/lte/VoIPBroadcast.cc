@@ -10,6 +10,7 @@
 #include <cmath>
 #include "artery/lte/VoIPBroadcast.h"
 #include "artery/networking/GeoNetPacket.h"
+#include "inet/transportlayer/udp/UDPPacket.h"
 
 #define round(x) floor((x) + 0.5)
 
@@ -40,25 +41,13 @@ void VoIPBroadcast::initialize(int stage)
     if (stage!=inet::INITSTAGE_APPLICATION_LAYER)
         return;
 
-    durTalk_ = 0;
-    durSil_ = 0;
     selfSource_ = new cMessage("selfSource");
-    scaleTalk_ = par("scale_talk");
-    shapeTalk_ = par("shape_talk");
-    scaleSil_ = par("scale_sil");
-    shapeSil_ = par("shape_sil");
-    isTalk_ = par("is_talk");
-    iDtalk_ = 0;
-    nframes_ = 0;
     nframesTmp_ = 0;
-    iDframe_ = 0;
-    timestamp_ = 0;
     size_ = par("PacketSize");
     sampling_time = par("sampling_time");
     selfSender_ = new cMessage("selfSender");
     localPort_ = par("localPort");
     destPort_ = par("destPort");
-    silences_ = par("silences");
 
     totalSentBytes_ = 0;
     warmUpPer_ = getSimulation()->getWarmupPeriod();
@@ -136,19 +125,14 @@ void VoIPBroadcast::sendVoIPPacket(GeoNetPacket* p)
     // if (p)
     //     gn = p;
 
-    VoipPacket* packet = new VoipPacket("GeoNet inside");
+    inet::UDPPacket* packet = new inet::UDPPacket("GeoNet inside");
     packet->encapsulate(p);
-    packet->setIDtalk(iDtalk_ - 1);
-    packet->setNframes(nframes_);
-    packet->setIDframe(iDframe_);
     packet->setTimestamp(simTime());
-    packet->setByteLength(size_);
-    EV << "VoIPBroadcast::sendVoIPPacket - Talkspurt[" << iDtalk_-1 << "] - Sending frame[" << iDframe_ << "]\n";
+    packet->setByteLength(p->getByteLength());
     EV << destAddress_ << endl;
     EV << destPort_ << endl;
     socket.sendTo(packet, destAddress_, destPort_);
     --nframesTmp_;
-    ++iDframe_;
 
     // emit throughput sample
     totalSentBytes_ += size_;
