@@ -43,12 +43,9 @@ void MyVoIPReceiver::handleMessage(cMessage *msg)
 {
     if (msg->isSelfMessage())
         return;
+
     inet::UDPPacket* pPacket = check_and_cast<inet::UDPPacket*>(msg);
-
-    artery::GeoNetPacket* decapsulatedPacket = new artery::GeoNetPacket();
-
-    //decapsulatedPacket = check_and_cast<artery::GeoNetPacket*>(pPacket->decapsulate());
-    //GeoNetPacket* p = pPacket->decapsulate();
+    GeoNetPacket* decapsulatedPacket = check_and_cast<GeoNetPacket*>(pPacket->decapsulate());
 
     EV << "Decapsulated: " << decapsulatedPacket << endl;
 
