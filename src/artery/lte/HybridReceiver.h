@@ -32,6 +32,8 @@ class HybridReceiver : public cSimpleModule
 
     simsignal_t voIPReceivedThroughput_;
 
+    omnetpp::cGate* geoNetOut;
+
     virtual void finish();
 
   protected:

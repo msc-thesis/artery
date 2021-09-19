@@ -44,5 +44,6 @@ simple HybridReceiver like IUDPApp
     gates:
         output udpOut;
         input udpIn;
+        output geoNetOut;
 }
 

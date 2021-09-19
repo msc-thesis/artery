@@ -26,6 +26,8 @@ void HybridReceiver::initialize(int stage)
         return;
 
     int port = par("localPort");
+    geoNetOut = gate("geoNetOut");
+
     EV << "HybridReceiver::initialize - binding to port: local:" << port << endl;
     if (port != -1)
     {
@@ -57,6 +59,8 @@ void HybridReceiver::handleMessage(cMessage *msg)
         double tputSample = (double)totalRcvdBytes_ / interval;
         emit(voIPReceivedThroughput_, tputSample );
     }
+    
+    send(decapsulatedPacket, geoNetOut);
 
     pPacket->setArrivalTime(simTime());
 }
