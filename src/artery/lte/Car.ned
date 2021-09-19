@@ -37,7 +37,7 @@ module Car extends artery.inet.Car
         }
 
         networkLayer: <default("IPv4NetworkLayer")> like INetworkLayer {
-            @display("p=150,125");
+            @display("p=150,300");
         }
 
         lteNic: <nicType> like ILteNic {
@@ -46,11 +46,11 @@ module Car extends artery.inet.Car
         }
 
         udpApp[numUdpApps]: <> like IUDPApp {
-             @display("p=250,25,col,-100");
+             @display("p=150,125,col,-100");
         }
 
         udp: UDP if numUdpApps > 0 {
-            @display("p=250,125");
+            @display("p=150,200");
         }
 
         tcpApp[numTcpApps]: <> like ITCPApp {

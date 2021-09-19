@@ -39,7 +39,7 @@ module RSU like INetworkNode
 
         wlan[numRadios]: <default("VanetNic")> like IWirelessNic {
             parameters:
-                @display("p=216,406,row,60;q=queue");
+                @display("p=280,406,row,60;q=queue");
                 radio.antenna.mobilityModule = withAntennaMobility ?
                     ".antennaMobility[" + string(index) + "]" : ".mobility";
         }
@@ -47,7 +47,7 @@ module RSU like INetworkNode
         // network layer
         networkLayer: <networkLayerType> like INetworkLayer {
             parameters:
-                @display("p=329,287;q=queue");
+                @display("p=368,287;q=queue");
         }
 
         // routing table
@@ -69,12 +69,14 @@ module RSU like INetworkNode
 
         radioDriver[numRadios]: RadioDriver {
             parameters:
+                @display("p=192,287");
                 macModule = ".wlan[" + string(index) + "].mac";
                 radioModule = ".wlan[" + string(index) + "].radio";
         }
 
         vanetza[numRadios]: Vanetza {
             parameters:
+                @display("p=192,406");
                 *.middlewareModule = absPath("^.middleware");
                 *.mobilityModule = absPath("^.mobility");
                 *.radioDriverModule = absPath("^.radioDriver[" + string(index) + "]");

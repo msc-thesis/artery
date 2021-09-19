@@ -52,14 +52,14 @@ module Car like INetworkNode
 
         radioDriver[numRadios]: RadioDriver {
             parameters:
-                @display("p=250,300,row,100");
+                @display("p=250,125,row,100");
                 macModule = ".wlan[" + string(index) + "].mac";
                 radioModule = ".wlan[" + string(index) + "].radio";
         }
 
         vanetza[numRadios]: Vanetza {
             parameters:
-                @display("p=250,200,row,100");
+                @display("p=250,25,row,100");
                 *.middlewareModule = absPath("^.middleware");
                 *.mobilityModule = absPath("^.mobility");
                 *.radioDriverModule = absPath("^.radioDriver[" + string(index) + "]");
