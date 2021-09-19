@@ -13,4 +13,5 @@ module CamReporter
         output ethOut;
         input socketIn2;
         output socketOut2;
+        input socketIn3;
 }

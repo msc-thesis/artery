@@ -4,6 +4,8 @@
 #include <inet/transportlayer/contract/udp/UDPSocket.h>
 #include <omnetpp/clistener.h>
 #include <omnetpp/csimplemodule.h>
+#include "artery/inet/VanetRxControl.h"
+#include "artery/inet/VanetTxControl.h"
 
 namespace artery {
 namespace adasapp {
@@ -17,6 +19,8 @@ protected:
     virtual void receiveSignal(omnetpp::cComponent*, omnetpp::simsignal_t, omnetpp::cObject*, omnetpp::cObject*) override;
 
     virtual void handleMessage(omnetpp::cMessage *msg) override;
+    VanetRxControl* txToRxControl(VanetTxControl* ctrl);
+
 
 private:
     void sendReport();
@@ -26,6 +30,8 @@ private:
     omnetpp::cGate* ethOut;
     omnetpp::cGate* socketIn2;
     omnetpp::cGate* socketOut2;
+    omnetpp::cGate* socketIn3;
+    int port;
 
     int camRx;
 };

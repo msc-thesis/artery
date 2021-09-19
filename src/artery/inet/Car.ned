@@ -81,8 +81,8 @@ module Car like INetworkNode
         for i=0..sizeof(radioIn)-1 {
             radioIn[i] --> { @display("m=s"); } --> wlan[i].radioIn;
 
-            wlan[i].upperLayerOut --> radioDriver[i].lowerLayerIn;
-            wlan[i].upperLayerIn <-- radioDriver[i].lowerLayerOut;
+            //wlan[i].upperLayerOut --> radioDriver[i].lowerLayerIn;
+            //wlan[i].upperLayerIn <-- radioDriver[i].lowerLayerOut;
 
             radioDriver[i].upperLayer <--> vanetza[i].radioDriverData;
             radioDriver[i].properties --> vanetza[i].radioDriverProperties;
