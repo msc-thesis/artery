@@ -126,9 +126,11 @@ void VoIPBroadcast::sendVoIPPacket(GeoNetPacket* p)
     //     gn = p;
 
     inet::UDPPacket* packet = new inet::UDPPacket("GeoNet inside");
+    int udpPacketLength = packet->getByteLength();
+    int geoNetPacketLength = p->getByteLength();
     packet->encapsulate(p);
     packet->setTimestamp(simTime());
-    packet->setByteLength(p->getByteLength());
+    packet->setByteLength(udpPacketLength + geoNetPacketLength);
     EV << destAddress_ << endl;
     EV << destPort_ << endl;
     socket.sendTo(packet, destAddress_, destPort_);
