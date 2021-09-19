@@ -12,7 +12,7 @@ package artery.lte;
 import inet.applications.contract.IUDPApp;
 
 
-simple MyVoIPReceiver like IUDPApp
+simple HybridReceiver like IUDPApp
 {
     parameters:
         int localPort = default(3000);

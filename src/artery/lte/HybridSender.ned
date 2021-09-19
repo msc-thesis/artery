@@ -12,7 +12,7 @@ package artery.lte;
 import inet.applications.contract.IUDPApp;
 
 
-simple VoIPBroadcast like IUDPApp
+simple HybridSender like IUDPApp
 {
     parameters:
         int localPort = default(-1);

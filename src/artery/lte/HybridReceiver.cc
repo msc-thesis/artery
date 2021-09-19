@@ -7,26 +7,26 @@
 // and cannot be removed from it.
 //
 
-#include "artery/lte/MyVoIPReceiver.h"
+#include "artery/lte/HybridReceiver.h"
 #include "inet/transportlayer/udp/UDPPacket.h"
 #include "artery/networking/GeoNetPacket.h"
 
 namespace artery
 {
 
-Define_Module(MyVoIPReceiver);
+Define_Module(HybridReceiver);
 
-MyVoIPReceiver::~MyVoIPReceiver()
+HybridReceiver::~HybridReceiver()
 {
 }
 
-void MyVoIPReceiver::initialize(int stage)
+void HybridReceiver::initialize(int stage)
 {
     if (stage != inet::INITSTAGE_APPLICATION_LAYER)
         return;
 
     int port = par("localPort");
-    EV << "MyVoIPReceiver::initialize - binding to port: local:" << port << endl;
+    EV << "HybridReceiver::initialize - binding to port: local:" << port << endl;
     if (port != -1)
     {
         socket.setOutputGate(gate("udpOut"));
@@ -39,7 +39,7 @@ void MyVoIPReceiver::initialize(int stage)
     voIPReceivedThroughput_ = registerSignal("voIPReceivedThroughput");
 }
 
-void MyVoIPReceiver::handleMessage(cMessage *msg)
+void HybridReceiver::handleMessage(cMessage *msg)
 {
     if (msg->isSelfMessage())
         return;
@@ -61,7 +61,7 @@ void MyVoIPReceiver::handleMessage(cMessage *msg)
     pPacket->setArrivalTime(simTime());
 }
 
-void MyVoIPReceiver::finish()
+void HybridReceiver::finish()
 {
 }
 

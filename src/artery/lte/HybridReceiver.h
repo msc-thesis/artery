@@ -7,8 +7,8 @@
 // and cannot be removed from it.
 //
 
-#ifndef _LTE_MYVOIPRECEIVER_H_
-#define _LTE_MYVOIPRECEIVER_H_
+#ifndef _LTE_HybridReceiver_H_
+#define _LTE_HybridReceiver_H_
 
 #include <string.h>
 #include <omnetpp.h>
@@ -21,11 +21,11 @@
 namespace artery
 {
 
-class MyVoIPReceiver : public cSimpleModule
+class HybridReceiver : public cSimpleModule
 {
     inet::UDPSocket socket;
 
-    ~MyVoIPReceiver();
+    ~HybridReceiver();
 
     unsigned int totalRcvdBytes_;
     simtime_t warmUpPer_;

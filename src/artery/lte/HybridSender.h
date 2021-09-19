@@ -7,8 +7,8 @@
 // and cannot be removed from it.
 //
 
-#ifndef _LTE_VoIPBroadcast_H_
-#define _LTE_VoIPBroadcast_H_
+#ifndef _LTE_HybridSender_H_
+#define _LTE_HybridSender_H_
 
 #include <string.h>
 #include <omnetpp.h>
@@ -21,7 +21,7 @@
 namespace artery
 {
 
-class VoIPBroadcast : public cSimpleModule
+class HybridSender : public cSimpleModule
 {
     inet::UDPSocket socket;
 
@@ -50,8 +50,8 @@ class VoIPBroadcast : public cSimpleModule
     void sendVoIPPacket(GeoNetPacket* p = nullptr);
 
   public:
-    ~VoIPBroadcast();
-    VoIPBroadcast();
+    ~HybridSender();
+    HybridSender();
 
   protected:
 

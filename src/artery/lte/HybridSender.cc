@@ -8,7 +8,7 @@
 //
 
 #include <cmath>
-#include "artery/lte/VoIPBroadcast.h"
+#include "artery/lte/HybridSender.h"
 #include "artery/networking/GeoNetPacket.h"
 #include "inet/transportlayer/udp/UDPPacket.h"
 
@@ -17,21 +17,21 @@
 namespace artery
 {
 
-Define_Module(VoIPBroadcast);
+Define_Module(HybridSender);
 
-VoIPBroadcast::VoIPBroadcast()
+HybridSender::HybridSender()
 {
     selfSource_ = NULL;
     selfSender_ = NULL;
 }
 
-VoIPBroadcast::~VoIPBroadcast()
+HybridSender::~HybridSender()
 {
     cancelAndDelete(selfSource_);
     cancelAndDelete(selfSender_);
 }
 
-void VoIPBroadcast::initialize(int stage)
+void HybridSender::initialize(int stage)
 {
     EV << "VoIP Sender initialize: stage " << stage << endl;
 
@@ -53,7 +53,7 @@ void VoIPBroadcast::initialize(int stage)
     warmUpPer_ = getSimulation()->getWarmupPeriod();
     voIPGeneratedThroughtput_ = registerSignal("voIPGeneratedThroughput");
 
-    EV << "VoIPBroadcast::initialize - binding to port: local:" << localPort_ << endl;
+    EV << "HybridSender::initialize - binding to port: local:" << localPort_ << endl;
 
     socket.setOutputGate(gate("udpOut"));
     socket.bind(localPort_);
@@ -62,7 +62,7 @@ void VoIPBroadcast::initialize(int stage)
     initTraffic();
 }
 
-void VoIPBroadcast::handleMessage(cMessage *msg)
+void HybridSender::handleMessage(cMessage *msg)
 {
     if (msg->isSelfMessage())
     {
@@ -84,18 +84,18 @@ void VoIPBroadcast::handleMessage(cMessage *msg)
     }
 }
 
-void VoIPBroadcast::initTraffic()
+void HybridSender::initTraffic()
 {
     const char* destAddress = par("destAddress").stringValue();
     cModule* destModule = getModuleByPath(destAddress);
     if (destModule == NULL)
     {
         // this might happen when users are created dynamically
-        EV << simTime() << "VoIPBroadcast::initTraffic - destination " << destAddress << " not found" << endl;
+        EV << simTime() << "HybridSender::initTraffic - destination " << destAddress << " not found" << endl;
 
         simtime_t offset = 0.01; // TODO check value
         scheduleAt(simTime()+offset, initTraffic_);
-        EV << simTime() << "VoIPBroadcast::initTraffic - the node will retry to initialize traffic in " << offset << " seconds " << endl;
+        EV << simTime() << "HybridSender::initTraffic - the node will retry to initialize traffic in " << offset << " seconds " << endl;
     }
     else
     {
@@ -105,7 +105,7 @@ void VoIPBroadcast::initTraffic()
         // socket.setOutputGate(gate("udpOut"));
         // socket.bind(localPort_);
 
-        EV << simTime() << "VoIPBroadcast::initialize - binding to port: local:" << localPort_ << " , dest: " << destAddress_.str() << ":" << destPort_ << endl;
+        EV << simTime() << "HybridSender::initialize - binding to port: local:" << localPort_ << " , dest: " << destAddress_.str() << ":" << destPort_ << endl;
 
         // calculating traffic starting time
         simtime_t startTime = par("startTime");
@@ -119,7 +119,7 @@ void VoIPBroadcast::initTraffic()
     }
 }
 
-void VoIPBroadcast::sendVoIPPacket(GeoNetPacket* p)
+void HybridSender::sendVoIPPacket(GeoNetPacket* p)
 {
     GeoNetPacket* gn = new GeoNetPacket("GeoNet packet");
     // if (p)

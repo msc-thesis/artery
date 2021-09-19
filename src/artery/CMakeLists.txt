@@ -141,8 +141,8 @@ if(TARGET lte)
     # SimuLTE is a non-integral feature: add it to "artery" but not "core"
     message(STATUS "Enable SimuLTE integration")
     set_property(TARGET core APPEND PROPERTY SOURCES
-    lte/VoIPBroadcast.cc
-    lte/MyVoIPReceiver.cc
+    lte/HybridSender.cc
+    lte/HybridReceiver.cc
     adasapp/collector/CamReporter.cc
     )
 target_link_libraries(artery INTERFACE lte)
