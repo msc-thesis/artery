@@ -49,8 +49,6 @@ void HybridReceiver::handleMessage(cMessage *msg)
     inet::UDPPacket* pPacket = check_and_cast<inet::UDPPacket*>(msg);
     GeoNetPacket* decapsulatedPacket = check_and_cast<GeoNetPacket*>(pPacket->decapsulate());
 
-    EV << "Decapsulated: " << decapsulatedPacket << endl;
-
     // emit throughput sample
     totalRcvdBytes_ += (int)pPacket->getByteLength();
     double interval = SIMTIME_DBL(simTime() - warmUpPer_);
