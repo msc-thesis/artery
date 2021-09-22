@@ -19,17 +19,17 @@ network World extends artery.inet.World
     submodules:
         channelControl: LteChannelControl {
             parameters:
-                @display("p=140,20");
+                @display("p=300,100");
         }
 
         binder: LteBinder {
             parameters:
-                @display("p=140,60");
+                @display("p=100,500");
         }
 
         configurator: IPv4NetworkConfigurator {
             parameters:
-                @display("p=60,60");
+                @display("p=300,500");
         }
 
         eNodeB[numLteBaseStations]: eNodeB {
@@ -42,23 +42,25 @@ network World extends artery.inet.World
 
         pgw: PgwStandardSimplified {
             parameters:
-                @display("p=220,100");
+                @display("p=600,1000");
                 nodeType = "PGW";
         }
 
         server: StandardHost {
-            @display("p=220,20;is=n;i=device/server");
+            @display("p=600,20;is=n;i=device/server");
         }
 
         router: Router {
-            @display("p=220,60;i=device/smallrouter");
+            @display("p=600,400;i=device/smallrouter");
         }
 
         // biRouter: Router {
         //     @display("p=1300,200;i=device/smallrouter");
         // }
 
-        tmc: TMC;
+        tmc: TMC {
+            @display("p=1600,400");
+        }
 
     connections allowunconnected:
         for i = 0..numLteBaseStations-2 {

@@ -25,12 +25,12 @@ network World
     submodules:
         traci: Manager {
             parameters:
-                @display("p=20,20");
+                @display("p=100,300");
         }
 
         radioMedium: <default("Ieee80211ScalarRadioMedium")> like IRadioMedium {
             parameters:
-                @display("p=60,20");
+                @display("p=100,100");
                 mediumLimitCache.carrierFrequency = 5.9GHz;
         }
 
@@ -51,7 +51,7 @@ network World
 
         staticNodes: StaticNodeManager {
             parameters:
-                @display("p=20,40");
+                @display("p=300,300");
                 waitForTraCI = default(true);
         }
 
