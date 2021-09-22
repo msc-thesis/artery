@@ -25,29 +25,12 @@ class HybridSender : public cSimpleModule
 {
     inet::UDPSocket socket;
 
-    //source
-    cMessage* selfSource_;
-    //sender
-    int nframesTmp_;
-    int size_;
-    simtime_t sampling_time;
-
-    unsigned int totalSentBytes_;
-    simtime_t warmUpPer_;
-
-    simsignal_t voIPGeneratedThroughtput_;
-    // ----------------------------
-
-    cMessage *selfSender_;
-
-    cMessage *initTraffic_;
-
     int localPort_;
     int destPort_;
     inet::L3Address destAddress_;
 
     void initTraffic();
-    void sendVoIPPacket(GeoNetPacket* p = nullptr);
+    void sendUDPPacket(GeoNetPacket* p = nullptr);
 
   public:
     ~HybridSender();
