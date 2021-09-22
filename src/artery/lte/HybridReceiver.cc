@@ -8,7 +8,6 @@
 //
 
 #include "artery/lte/HybridReceiver.h"
-#include "inet/transportlayer/udp/UDPPacket.h"
 #include "artery/networking/GeoNetPacket.h"
 
 namespace artery
@@ -18,6 +17,10 @@ Define_Module(HybridReceiver);
 
 HybridReceiver::~HybridReceiver()
 {
+    while (!packetsList.empty()) {
+        delete packetsList.front();
+        packetsList.pop_front();
+    }
 }
 
 void HybridReceiver::initialize(int stage)
@@ -61,6 +64,7 @@ void HybridReceiver::handleMessage(cMessage *msg)
     send(decapsulatedPacket, geoNetOut);
 
     pPacket->setArrivalTime(simTime());
+    packetsList.push_back(pPacket);
 }
 
 void HybridReceiver::finish()

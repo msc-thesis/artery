@@ -57,6 +57,8 @@ void HybridSender::handleMessage(cMessage *msg)
         if (destModule != nullptr) {
             destAddress_ = inet::L3AddressResolver().resolve(destAddress);
             sendUDPPacket(dynamic_cast<GeoNetPacket*>(msg));
+        } else {
+            delete msg;
         }
     }
 }

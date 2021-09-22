@@ -15,7 +15,7 @@
 
 #include "inet/networklayer/common/L3AddressResolver.h"
 #include "inet/transportlayer/contract/udp/UDPSocket.h"
-#include "artery/lte/VoipPacket_m.h"
+#include "inet/transportlayer/udp/UDPPacket.h"
 #include <list>
 
 namespace artery
@@ -26,6 +26,7 @@ class HybridReceiver : public cSimpleModule
     inet::UDPSocket socket;
 
     ~HybridReceiver();
+    std::list<inet::UDPPacket*> packetsList;
 
     unsigned int totalRcvdBytes_;
     simtime_t warmUpPer_;

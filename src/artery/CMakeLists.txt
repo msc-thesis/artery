@@ -148,8 +148,6 @@ if(TARGET lte)
 target_link_libraries(artery INTERFACE lte)
 endif()
 
-generate_opp_message(lte/VoipPacket.msg TARGET core)
-
 macro(add_artery_feature name)
     add_library(${name} SHARED ${ARGN})
     add_library(Artery::${name} ALIAS ${name})
