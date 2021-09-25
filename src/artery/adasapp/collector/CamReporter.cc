@@ -87,7 +87,6 @@ void CamReporter::handleMessage(cMessage *msg) {
 
         VanetTxControl* geoCtrl = check_and_cast<VanetTxControl*>(msg->getControlInfo()->dup());
         if (ethCopy->getControlInfo() == 0) {
-            //ethCopy->setControlInfo(geoCtrl);
             ethCopy->addObject(geoCtrl);
         }
 
@@ -100,6 +99,7 @@ void CamReporter::handleMessage(cMessage *msg) {
         send(msg, socketOut2);
     } else if (msg->getArrivalGate() == socketIn3) {
         VanetRxControl* ctrl = txToRxControl(check_and_cast<VanetTxControl*>(msg->getObject("")));
+        msg->removeControlInfo();
         msg->setControlInfo(ctrl);
         send(msg, socketOut2);
     }
