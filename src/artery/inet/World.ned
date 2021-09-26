@@ -41,7 +41,7 @@ network World
 
         storyboard: Storyboard if withStoryboard {
             parameters:
-                @display("p=140,20");
+                @display("p=100,700");
         }
 
         rsu[numRoadSideUnits]: RSU {
