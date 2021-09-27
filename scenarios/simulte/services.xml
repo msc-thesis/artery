@@ -6,4 +6,7 @@
 	<service type="artery.application.DenService">
 		<listener port="2002" />
 	</service>
+	<service type="artery.application.TestService">
+		<listener port="2003" />
+	</service>
 </services>

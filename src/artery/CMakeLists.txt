@@ -74,6 +74,7 @@ target_link_libraries(artery INTERFACE core)
 add_library(Artery::Core ALIAS core)
 
 generate_opp_message(utility/AsioData.msg TARGET core)
+generate_opp_message(application/TestMsg.msg TARGET core)
 
 set_target_properties(core PROPERTIES
     OUTPUT_NAME artery_core
@@ -144,6 +145,7 @@ if(TARGET lte)
     lte/HybridSender.cc
     lte/HybridReceiver.cc
     adasapp/collector/CamReporter.cc
+    application/TestService.cc
     )
 target_link_libraries(artery INTERFACE lte)
 endif()
@@ -188,3 +190,5 @@ if(NOT is_multi_config)
         PROGRAMS ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/run_artery.sh.install
         DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME run_artery.sh)
 endif()
+
+add_artery_feature(testservice application/TestService.cc)
