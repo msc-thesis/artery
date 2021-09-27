@@ -14,6 +14,7 @@ network World extends artery.inet.World
 {
     parameters:
         int numLteBaseStations = default(1);
+        bool hybridScenario = default(false);
         traci.mapper.vehicleType = default("artery.lte.Car");
 
     submodules:
@@ -54,11 +55,7 @@ network World extends artery.inet.World
             @display("p=600,400;i=device/smallrouter");
         }
 
-        // biRouter: Router {
-        //     @display("p=1300,200;i=device/smallrouter");
-        // }
-
-        tmc: TMC {
+        tmc: TMC if hybridScenario {
             @display("p=1600,400");
         }
 
@@ -74,11 +71,11 @@ network World extends artery.inet.World
         server.pppg++ <--> Eth10G <--> router.pppg++;
         router.pppg++ <--> Eth10G <--> pgw.filterGate;
 
-        router.pppg++ <--> Eth10G <--> tmc.pppg++;
+        if hybridScenario {
+            router.pppg++ <--> Eth10G <--> tmc.pppg++;
+        }
 
-        // server.ethg++ <--> Eth10G <--> biRouter.ethg++;
-        
         for i = 0..numRoadSideUnits-1 {
-            rsu[i].ethg++ <--> Eth10G <--> tmc.ethg++;
+            rsu[i].ethg++ <--> Eth10G <--> tmc.ethg++ if hybridScenario;
         }
 }

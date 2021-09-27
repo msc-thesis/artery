@@ -24,6 +24,7 @@ module Car like INetworkNode
 
         int numRadios = default(1);
         bool withAntennaMobility = default(false);
+        bool hybridScenario = default(false);
         *.interfaceTableModule = default(absPath(".interfaceTable"));
         mobility.visualRepresentation = "^";
 
@@ -81,8 +82,8 @@ module Car like INetworkNode
         for i=0..sizeof(radioIn)-1 {
             radioIn[i] --> { @display("m=s"); } --> wlan[i].radioIn;
 
-            //wlan[i].upperLayerOut --> radioDriver[i].lowerLayerIn;
-            //wlan[i].upperLayerIn <-- radioDriver[i].lowerLayerOut;
+            wlan[i].upperLayerOut --> radioDriver[i].lowerLayerIn if !hybridScenario;
+            wlan[i].upperLayerIn <-- radioDriver[i].lowerLayerOut if !hybridScenario;
 
             radioDriver[i].upperLayer <--> vanetza[i].radioDriverData;
             radioDriver[i].properties --> vanetza[i].radioDriverProperties;

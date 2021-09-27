@@ -62,7 +62,7 @@ module Car extends artery.inet.Car
             @display("p=350,125");
         }
 
-        camReporter: CamReporter {
+        camReporter: CamReporter if hybridScenario {
             @display("p=250,300");
         }
 
@@ -73,9 +73,9 @@ module Car extends artery.inet.Car
         networkLayer.ifIn++ <-- lteNic.upperLayerOut;
 
         for i = 0..numUdpApps-1 {
-            udpApp[i].udpIn <-- udp.appOut++;
             udpApp[i].udpOut --> udp.appIn++;
-            udpApp[i].geoNetOut --> camReporter.socketIn3;
+            udpApp[i].udpIn <-- udp.appOut++;
+            udpApp[i].geoNetOut --> camReporter.socketIn3 if hybridScenario;
         }
 
         udp.ipOut --> networkLayer.transportIn++ if numUdpApps > 0;
@@ -90,11 +90,11 @@ module Car extends artery.inet.Car
         tcp.ipIn <-- networkLayer.transportout++ if numTcpApps > 0;
 
         for i=0..sizeof(radioIn)-1 {
-            camReporter.socketIn2 <-- wlan[i].upperLayerOut;
-            radioDriver[i].lowerLayerIn <-- camReporter.socketOut2;
+            camReporter.socketIn2 <-- wlan[i].upperLayerOut if hybridScenario;
+            radioDriver[i].lowerLayerIn <-- camReporter.socketOut2 if hybridScenario;
             
-            radioDriver[i].lowerLayerOut --> camReporter.socketIn;
-            camReporter.wlanOut --> wlan[i].upperLayerIn;
-            //camReporter.ethOut --> networkLayer.transportIn++;
+            radioDriver[i].lowerLayerOut --> camReporter.socketIn if hybridScenario;
+            camReporter.wlanOut --> wlan[i].upperLayerIn if hybridScenario;
+            //camReporter.ethOut --> networkLayer.transportIn++ if hybridScenario;
         }
 }

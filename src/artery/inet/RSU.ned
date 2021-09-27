@@ -19,6 +19,7 @@ module RSU like INetworkNode
         @networkNode;
         @labels(node,ethernet-node,wireless-node);
         int numRadios = default(1);
+        bool hybridScenario = default(false);
         string networkLayerType = default("IPv4NetworkLayer");
         bool withAntennaMobility = default(false);
         *.interfaceTableModule = default(absPath(".interfaceTable"));
@@ -45,18 +46,18 @@ module RSU like INetworkNode
         }
 
         // network layer
-        networkLayer: <networkLayerType> like INetworkLayer {
+        networkLayer: <networkLayerType> like INetworkLayer if hybridScenario {
             parameters:
                 @display("p=368,287;q=queue");
         }
 
         // routing table
-        routingTable: <routingTableType> like IRoutingTable if routingTableType != "" {
+        routingTable: <routingTableType> like IRoutingTable if routingTableType != "" && hybridScenario {
             parameters:
                 @display("p=53,250;is=s");
         }
 
-        eth[sizeof(ethg)]: <default("EthernetInterface")> like IWiredNic {
+        eth[sizeof(ethg)]: <default("EthernetInterface")> like IWiredNic if hybridScenario {
             parameters:
                 @display("p=368,406,row,60;q=txQueue");
         }
@@ -86,7 +87,7 @@ module RSU like INetworkNode
                 router.isMobile = false;
         }
 
-        camReporter: CamReporter {
+        camReporter: CamReporter if hybridScenario {
             parameters:
                 @display("p=280,287");
         }
@@ -105,26 +106,23 @@ module RSU like INetworkNode
         for i=0..sizeof(radioIn)-1 {
             radioIn[i] --> { @display("m=s"); } --> wlan[i].radioIn;
 
-            // wlan[i].upperLayerOut --> radioDriver[i].lowerLayerIn;
-            // wlan[i].upperLayerIn <-- radioDriver[i].lowerLayerOut;
+            wlan[i].upperLayerOut --> radioDriver[i].lowerLayerIn if !hybridScenario;
+            wlan[i].upperLayerIn <-- radioDriver[i].lowerLayerOut if !hybridScenario;
 
-            camReporter.socketIn2 <-- wlan[i].upperLayerOut;
-            radioDriver[i].lowerLayerIn <-- camReporter.socketOut2;
+            camReporter.socketIn2 <-- wlan[i].upperLayerOut if hybridScenario;
+            radioDriver[i].lowerLayerIn <-- camReporter.socketOut2 if hybridScenario;
 
-            radioDriver[i].lowerLayerOut --> camReporter.socketIn;
-            camReporter.wlanOut --> wlan[i].upperLayerIn;
-            camReporter.ethOut --> networkLayer.transportIn++;
+            radioDriver[i].lowerLayerOut --> camReporter.socketIn if hybridScenario;
+            camReporter.wlanOut --> wlan[i].upperLayerIn if hybridScenario;
+            camReporter.ethOut --> networkLayer.transportIn++ if hybridScenario;
 
             radioDriver[i].upperLayer <--> vanetza[i].radioDriverData;
             radioDriver[i].properties --> vanetza[i].radioDriverProperties;
-
-            // wlan[i].upperLayerOut --> networkLayer.ifIn++;
-            // wlan[i].upperLayerIn <-- networkLayer.ifOut++;
         }
 
         for i=0..sizeof(ethg)-1 {
-            ethg[i] <--> { @display("m=s"); } <--> eth[i].phys;
-            eth[i].upperLayerOut --> networkLayer.ifIn++;
-            eth[i].upperLayerIn <-- networkLayer.ifOut++;
+            ethg[i] <--> { @display("m=s"); } <--> eth[i].phys if hybridScenario;
+            eth[i].upperLayerOut --> networkLayer.ifIn++ if hybridScenario;
+            eth[i].upperLayerIn <-- networkLayer.ifOut++ if hybridScenario;
         }
 }
