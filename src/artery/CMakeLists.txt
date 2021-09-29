@@ -146,6 +146,7 @@ if(TARGET lte)
     lte/HybridReceiver.cc
     adasapp/collector/CamReporter.cc
     application/TestService.cc
+    application/TestServiceStoryboard.cc
     )
 target_link_libraries(artery INTERFACE lte)
 endif()

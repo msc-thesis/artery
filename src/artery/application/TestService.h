@@ -15,9 +15,9 @@ class TestService : public artery::ItsG5Service
     
     protected:
         void initialize() override;
+        const traci::VehicleController* mVehicleController = nullptr;
     
     private:
-        const traci::VehicleController* mVehicleController = nullptr;
 };
 
 }
