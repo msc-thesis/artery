@@ -13,7 +13,6 @@
 #include <string.h>
 #include <omnetpp.h>
 
-#include "inet/networklayer/common/L3AddressResolver.h"
 #include "inet/transportlayer/contract/udp/UDPSocket.h"
 #include "inet/transportlayer/udp/UDPPacket.h"
 #include <list>
