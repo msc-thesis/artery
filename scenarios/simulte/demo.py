@@ -14,26 +14,32 @@ def createStories(board):
 	coord3 = storyboard.Coord(0.0, 1500.0)
 
 	# Create PolygonCondition
-	cond0 = storyboard.PolygonCondition([coord0, coord1, coord2, coord3])
+	polygon_cond = storyboard.PolygonCondition([coord0, coord1, coord2, coord3])
 
 	# Create TimeCondition
-	cond1 = storyboard.TimeCondition(timeline.milliseconds(1000))
+	time_cond = storyboard.TimeCondition(timeline.milliseconds(5000))
 
 	# Create CarSetCondition
-	cond2 = storyboard.CarSetCondition({"0", "1", "2"})
+	cars_cond = storyboard.CarSetCondition({"0", "1", "2"})
 	
 	signal_effect = storyboard.SignalEffect("slow down")
 
 	impact_reduction_effect = storyboard.SignalEffect("irc")
 
 	# Create AndConditions
-	and0 = storyboard.AndCondition(cond0, cond1)
-	and1 = storyboard.AndCondition(and0, cond2)
+	and0 = storyboard.AndCondition(polygon_cond, time_cond)
+	and1 = storyboard.AndCondition(and0, cars_cond)
 
 	# Create Story
 	story = storyboard.Story(and1, [impact_reduction_effect])
 
+
+	car_cond = storyboard.CarSetCondition({"4"})
+	traction_loss = storyboard.SignalEffect("traction loss")
+	story2 = storyboard.Story(car_cond, [traction_loss])
+
 	# Register Stories at the Storyboard
 	board.registerStory(story)
+	board.registerStory(story2)
 
 	print("Stories loaded!")

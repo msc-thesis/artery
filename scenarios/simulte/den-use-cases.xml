@@ -3,4 +3,5 @@
     <usecase type="artery.application.den.TrafficJamEndOfQueue" />
     <usecase type="artery.application.den.TrafficJamAhead" />
     <usecase type="artery.application.den.ImpactReductionContainerExchange" />
+    <usecase type="artery.application.den.TractionLoss" />
 </usecases>
