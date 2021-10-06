@@ -13,6 +13,7 @@ import artery.lte.TMC;
 network World extends artery.inet.World
 {
     parameters:
+        @display("bgb=15000,5000;bgg=1000,2,grey95;bgu=m");
         int numLteBaseStations = default(1);
         bool hybridScenario = default(false);
         traci.mapper.vehicleType = default("artery.lte.Car");
@@ -43,7 +44,7 @@ network World extends artery.inet.World
 
         pgw: PgwStandardSimplified {
             parameters:
-                @display("p=600,1000");
+                @display("p=8000,1000");
                 nodeType = "PGW";
         }
 
@@ -62,6 +63,10 @@ network World extends artery.inet.World
     connections allowunconnected:
         for i = 0..numLteBaseStations-2 {
             eNodeB[i].x2++ <--> Eth10G <--> eNodeB[i+1].x2++;
+        }
+
+        if hybridScenario {
+            eNodeB[numLteBaseStations-1].x2++ <--> Eth10G <--> eNodeB[0].x2++;
         }
 
         for i = 0..numLteBaseStations-1 {
