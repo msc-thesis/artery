@@ -26,9 +26,22 @@ def createStories(board):
 
 	story2 = storyboard.Story(polygon_cond, [traction_loss_effect])
 
+	c5 = storyboard.Coord(2000, 1500)
+	c6 = storyboard.Coord(4000, 1500)
+	c7 = storyboard.Coord(4000, 2500)
+	c8 = storyboard.Coord(2000, 2500)
+	
+	polygon_cond_2 = storyboard.PolygonCondition([c5, c6, c7, c8])
+	#car_cond_2 = storyboard.CarSetCondition({"0"})
+	#and1 = storyboard.AndCondition(polygon_cond_2, car_cond_2)
+	
+	fog_effect = storyboard.SignalEffect("fog")
+
+	story3 = storyboard.Story(polygon_cond_2, [fog_effect])
 
 
 	board.registerStory(story)
 	board.registerStory(story2)
+	board.registerStory(story3)
 
 	print("Stories loaded!")
