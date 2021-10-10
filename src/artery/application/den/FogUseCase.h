@@ -1,27 +1,30 @@
 #ifndef ARTERY_DEN_FOGUSECASE
 #define ARTERY_DEN_FOGUSECASE
 
-#include "artery/application/den/UseCase.h"
+#include "artery/application/den/SuspendableUseCase.h"
+#include <vanetza/btp/data_request.hpp>
 
 namespace artery
 {
 namespace den
 {
 
-class FogUseCase : public UseCase
+class FogUseCase : public SuspendableUseCase
 {
 public:
-    // UseCase interface
     void check() override;
     void indicate(const artery::DenmObject&) override;
     void handleStoryboardTrigger(const StoryboardSignal&) override;
-
-    vanetza::asn1::Denm createMessage(RequestResponseIndication_t);
+    
+    vanetza::asn1::Denm createMessage();
     vanetza::btp::DataRequestB createRequest();
 
+protected:
+    void initialize(int stage) override;
+
 private:
-    bool mPendingRequest = false;
-    void transmitMessage(RequestResponseIndication_t);
+    bool mPendingSignal = false;
+    void transmitMessage();
 };
 
 } // namespace den
