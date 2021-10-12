@@ -35,7 +35,7 @@ void FogUseCase::indicate(const artery::DenmObject& denm)
 
     if (asn1->denm.situation->eventType.causeCode == CauseCodeType_adverseWeatherCondition_Visibility)
     {
-
+        printf("FOG indicated !!!\n");
     }
 }
 
