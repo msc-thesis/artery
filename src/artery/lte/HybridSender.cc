@@ -7,10 +7,6 @@ namespace artery
 
 Define_Module(HybridSender);
 
-HybridSender::HybridSender() {}
-
-HybridSender::~HybridSender() {}
-
 void HybridSender::initialize(int stage)
 {
     EV << "VoIP Sender initialize: stage " << stage << endl;
@@ -18,7 +14,7 @@ void HybridSender::initialize(int stage)
     cSimpleModule::initialize(stage);
 
     // avoid multiple initializations
-    if (stage!=inet::INITSTAGE_APPLICATION_LAYER)
+    if (stage != inet::INITSTAGE_APPLICATION_LAYER)
         return;
 
     localPort_ = par("localPort");
@@ -37,25 +33,14 @@ void HybridSender::handleMessage(cMessage *msg)
         const char* destAddress = par("destAddress").stringValue();
         cModule* destModule = getModuleByPath(destAddress);
         
-
         if (destModule != nullptr) {
             destAddress_ = inet::L3AddressResolver().resolve(destAddress);
-            sendUDPPacket(dynamic_cast<GeoNetPacket*>(msg));
+            msg->removeControlInfo();
+            socket.sendTo(check_and_cast<cPacket*>(msg), destAddress_, destPort_);
         } else {
             delete msg;
         }
     }
-}
-
-void HybridSender::sendUDPPacket(GeoNetPacket* p)
-{
-    inet::UDPPacket* packet = new inet::UDPPacket("GeoNet inside");
-    int udpPacketLength = packet->getByteLength();
-    int geoNetPacketLength = p->getByteLength();
-    packet->encapsulate(p);
-    packet->setTimestamp(simTime());
-    packet->setByteLength(udpPacketLength + geoNetPacketLength);
-    socket.sendTo(packet, destAddress_, destPort_);
 }
 
 } // artery

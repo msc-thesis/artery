@@ -23,21 +23,9 @@ namespace artery
 class HybridReceiver : public cSimpleModule
 {
     inet::UDPSocket socket;
-
-    ~HybridReceiver();
-    std::list<inet::UDPPacket*> packetsList;
-
-    unsigned int totalRcvdBytes_;
-    simtime_t warmUpPer_;
-
-    simsignal_t voIPReceivedThroughput_;
-
     omnetpp::cGate* geoNetOut;
 
-    virtual void finish();
-
   protected:
-
     virtual int numInitStages() const { return inet::NUM_INIT_STAGES; }
     void initialize(int stage);
     void handleMessage(cMessage *msg);

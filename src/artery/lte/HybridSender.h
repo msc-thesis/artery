@@ -23,20 +23,11 @@ namespace artery
 class HybridSender : public cSimpleModule
 {
     inet::UDPSocket socket;
-
     int localPort_;
     int destPort_;
     inet::L3Address destAddress_;
 
-    void initTraffic();
-    void sendUDPPacket(GeoNetPacket* p = nullptr);
-
-  public:
-    ~HybridSender();
-    HybridSender();
-
   protected:
-
     virtual int numInitStages() const { return inet::NUM_INIT_STAGES; }
     void initialize(int stage);
     void handleMessage(cMessage *msg);
