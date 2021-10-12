@@ -25,12 +25,11 @@ protected:
 private:
     void sendReport();
 
-    omnetpp::cGate* socketIn;
+    omnetpp::cGate* radioIn;
+    omnetpp::cGate* radioOut;
+    omnetpp::cGate* wlanIn;
     omnetpp::cGate* wlanOut;
     omnetpp::cGate* ethOut;
-    omnetpp::cGate* socketIn2;
-    omnetpp::cGate* socketOut2;
-    omnetpp::cGate* socketIn3;
     int port;
 
     int camRx;

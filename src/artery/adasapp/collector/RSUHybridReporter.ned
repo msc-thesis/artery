@@ -8,10 +8,9 @@ module RSUHybridReporter
         @class(adasapp::RSUHybridReporter);
 
     gates:
-        input socketIn;
+        input radioIn;
+        output radioOut;
+        input wlanIn;
         output wlanOut;
         output ethOut;
-        input socketIn2;
-        output socketOut2;
-        input socketIn3;
 }

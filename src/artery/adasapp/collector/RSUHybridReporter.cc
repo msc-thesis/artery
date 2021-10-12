@@ -14,8 +14,11 @@
 
 using namespace omnetpp;
 
-namespace artery {
-namespace adasapp {
+namespace artery
+{
+
+namespace adasapp
+{
 
 Define_Module(RSUHybridReporter)
 
@@ -23,12 +26,11 @@ static const simsignal_t camRxSignal = cComponent::registerSignal("CamReceived")
 #include <iostream>
 void RSUHybridReporter::initialize(int stage)
 {
-    socketIn = gate("socketIn");
+    radioIn = gate("radioIn");
+    radioOut = gate("radioOut");
+    wlanIn = gate("wlanIn");
     wlanOut = gate("wlanOut");
     ethOut = gate("ethOut");
-    socketIn2 = gate("socketIn2");
-    socketOut2 = gate("socketOut2");
-    socketIn3 = gate("socketIn3");
     port = par("centralPort");
 }
 
@@ -43,7 +45,7 @@ void RSUHybridReporter::finish()
 }
 
 void RSUHybridReporter::handleMessage(cMessage *msg) {
-    if (msg->getArrivalGate() == socketIn) {
+    if (msg->getArrivalGate() == radioIn) {
         send(msg, wlanOut);
 
         if (port == 9320)
@@ -67,29 +69,10 @@ void RSUHybridReporter::handleMessage(cMessage *msg) {
         packet->setControlInfo(ipCtrl);
         packet->encapsulate(check_and_cast<cPacket*>(ethCopy));
         send(packet, ethOut);
-    } else if (msg->getArrivalGate() == socketIn2) {
-        send(msg, socketOut2);
-    } else if (msg->getArrivalGate() == socketIn3) {
-        VanetRxControl* ctrl = txToRxControl(check_and_cast<VanetTxControl*>(msg->getObject("")));
-        msg->removeControlInfo();
-        msg->setControlInfo(ctrl);
-        send(msg, socketOut2);
+    } else if (msg->getArrivalGate() == wlanIn) {
+        send(msg, radioOut);
     }
 }
 
-VanetRxControl* RSUHybridReporter::txToRxControl(VanetTxControl* ctrl) {
-    VanetRxControl* tmp = new VanetRxControl();
-    tmp->setSrc(ctrl->getSrc());
-    tmp->setDest(ctrl->getDest());
-    tmp->setEtherType(ctrl->getEtherType());
-    tmp->setInterfaceId(ctrl->getInterfaceId());
-    tmp->setSwitchPort(ctrl->getSwitchPort());
-    tmp->setUserPriority(ctrl->getUserPriority());
-    tmp->setSsap(ctrl->getSsap());
-    tmp->setDsap(ctrl->getDsap());
-    tmp->setPauseUnits(ctrl->getPauseUnits());
-    return tmp;
-}
-
-}
-}
+} // Adasapp
+} // artery
