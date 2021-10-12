@@ -109,11 +109,11 @@ module RSU like INetworkNode
             wlan[i].upperLayerOut --> radioDriver[i].lowerLayerIn if !hybridScenario;
             wlan[i].upperLayerIn <-- radioDriver[i].lowerLayerOut if !hybridScenario;
 
-            hybridReporter.wlanIn <-- wlan[i].upperLayerOut if hybridScenario;
-            radioDriver[i].lowerLayerIn <-- hybridReporter.radioOut if hybridScenario;
+            hybridReporter.wlanGate$i <-- wlan[i].upperLayerOut if hybridScenario;
+            radioDriver[i].lowerLayerIn <-- hybridReporter.radioDriverGate$o if hybridScenario;
 
-            radioDriver[i].lowerLayerOut --> hybridReporter.radioIn if hybridScenario;
-            hybridReporter.wlanOut --> wlan[i].upperLayerIn if hybridScenario;
+            radioDriver[i].lowerLayerOut --> hybridReporter.radioDriverGate$i if hybridScenario;
+            hybridReporter.wlanGate$o --> wlan[i].upperLayerIn if hybridScenario;
             hybridReporter.ethOut --> networkLayer.transportIn++ if hybridScenario;
 
             radioDriver[i].upperLayer <--> vanetza[i].radioDriverData;

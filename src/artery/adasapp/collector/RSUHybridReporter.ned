@@ -3,14 +3,12 @@ package artery.adasapp.collector;
 module RSUHybridReporter
 {
     parameters:
-        int centralPort = default(9320);
         string centralAddress;
+        int centralPort = default(3000);
         @class(adasapp::RSUHybridReporter);
 
     gates:
-        input radioIn;
-        output radioOut;
-        input wlanIn;
-        output wlanOut;
+        inout radioDriverGate;
+        inout wlanGate;
         output ethOut;
 }
