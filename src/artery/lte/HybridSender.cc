@@ -1,6 +1,7 @@
 #include "artery/lte/HybridSender.h"
 #include "artery/networking/GeoNetPacket.h"
 #include "inet/transportlayer/udp/UDPPacket.h"
+#include "inet/transportlayer/contract/udp/UDPSocket.h"
 
 namespace artery
 {
@@ -31,8 +32,12 @@ void HybridSender::handleMessage(cMessage *msg)
 {
     if (!msg->isSelfMessage()) {
         const char* destAddress = par("destAddress").stringValue();
+
+        inet::UDPDataIndication* udpControlInfo = check_and_cast<inet::UDPDataIndication*>(msg->removeControlInfo());
+        inet::L3Address srcAddr = udpControlInfo->getSrcAddr();
+
         cModule* destModule = getModuleByPath(destAddress);
-        
+
         if (destModule != nullptr) {
             destAddress_ = inet::L3AddressResolver().resolve(destAddress);
             msg->removeControlInfo();
