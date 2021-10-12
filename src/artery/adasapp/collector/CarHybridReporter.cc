@@ -23,12 +23,12 @@ static const simsignal_t camRxSignal = cComponent::registerSignal("CamReceived")
 #include <iostream>
 void CarHybridReporter::initialize(int stage)
 {
-    socketIn = gate("socketIn");
-    wlanOut = gate("wlanOut");
-    ethOut = gate("ethOut");
-    socketIn2 = gate("socketIn2");
-    socketOut2 = gate("socketOut2");
-    socketIn3 = gate("socketIn3");
+    radioDriverIn = gate("radioDriverGate$i");
+    radioDriverOut = gate("radioDriverGate$o");
+    wlanIn = gate("wlanGate$i");
+    wlanOut = gate("wlanGate$o");
+    lteIn = gate("lteGate$i");
+    lteOut = gate("lteGate$o");
     port = par("centralPort");
 }
 
@@ -43,7 +43,7 @@ void CarHybridReporter::finish()
 }
 
 void CarHybridReporter::handleMessage(cMessage *msg) {
-    if (msg->getArrivalGate() == socketIn) {
+    if (msg->getArrivalGate() == radioDriverIn) {
         send(msg, wlanOut);
 
         if (port == 9320)
@@ -66,14 +66,14 @@ void CarHybridReporter::handleMessage(cMessage *msg) {
         packet->setDestinationPort(par("centralPort"));
         packet->setControlInfo(ipCtrl);
         packet->encapsulate(check_and_cast<cPacket*>(ethCopy));
-        send(packet, ethOut);
-    } else if (msg->getArrivalGate() == socketIn2) {
-        send(msg, socketOut2);
-    } else if (msg->getArrivalGate() == socketIn3) {
+        send(packet, lteOut);
+    } else if (msg->getArrivalGate() == wlanIn) {
+        send(msg, radioDriverOut);
+    } else if (msg->getArrivalGate() == lteIn) {
         VanetRxControl* ctrl = txToRxControl(check_and_cast<VanetTxControl*>(msg->getObject("")));
         msg->removeControlInfo();
         msg->setControlInfo(ctrl);
-        send(msg, socketOut2);
+        send(msg, radioDriverOut);
     }
 }
 
