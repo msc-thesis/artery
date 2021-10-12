@@ -21,7 +21,7 @@ void CarHybridReporter::initialize(int stage)
     wlanOut = gate("wlanGate$o");
     lteIn = gate("lteGate$i");
     lteOut = gate("lteGate$o");
-    port = par("centralPort");
+    centralPort = par("centralPort");
 }
 
 int CarHybridReporter::numInitStages() const
@@ -38,7 +38,7 @@ void CarHybridReporter::handleMessage(cMessage *msg) {
     if (msg->getArrivalGate() == radioDriverIn) {
         send(msg, wlanOut);
 
-        if (port == 9320)
+        if (centralPort == 9320)
             return;
 
         inet::IPv4ControlInfo* ipCtrl = new inet::IPv4ControlInfo();
@@ -47,15 +47,15 @@ void CarHybridReporter::handleMessage(cMessage *msg) {
         ipCtrl->setTimeToLive(1);
         
         auto* ethCopy = msg->dup();
-        ethCopy->setName("From RSU");
+        ethCopy->setName("GeoNet from Car");
 
         VanetTxControl* geoCtrl = check_and_cast<VanetTxControl*>(msg->getControlInfo()->dup());
         if (ethCopy->getControlInfo() == 0) {
             ethCopy->addObject(geoCtrl);
         }
 
-        inet::UDPPacket* packet = new inet::UDPPacket("UDP from RSU");
-        packet->setDestinationPort(par("centralPort"));
+        inet::UDPPacket* packet = new inet::UDPPacket("UDP from Car");
+        packet->setDestinationPort(centralPort);
         packet->setControlInfo(ipCtrl);
         packet->encapsulate(check_and_cast<cPacket*>(ethCopy));
         send(packet, lteOut);

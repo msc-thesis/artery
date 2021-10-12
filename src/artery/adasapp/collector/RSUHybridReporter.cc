@@ -44,7 +44,7 @@ void RSUHybridReporter::handleMessage(cMessage *msg) {
         ipCtrl->setTimeToLive(1);
         
         auto* ethCopy = msg->dup();
-        ethCopy->setName("From RSU");
+        ethCopy->setName("GeoNet from RSU");
 
         VanetTxControl* geoCtrl = check_and_cast<VanetTxControl*>(msg->getControlInfo()->dup());
         if (ethCopy->getControlInfo() == 0) {

@@ -29,7 +29,7 @@ private:
     omnetpp::cGate* wlanOut;
     omnetpp::cGate* lteIn;
     omnetpp::cGate* lteOut;
-    int port;
+    int centralPort;
     int camRx;
 };
 
