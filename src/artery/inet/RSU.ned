@@ -10,7 +10,7 @@ import inet.mobility.contract.IMobility;
 import inet.networklayer.contract.IRoutingTable;
 import inet.networklayer.contract.INetworkLayer;
 import inet.networklayer.common.InterfaceTable;
-import artery.adasapp.collector.CamReporter;
+import artery.adasapp.collector.HybridReporter;
 
 module RSU like INetworkNode
 {
@@ -87,7 +87,7 @@ module RSU like INetworkNode
                 router.isMobile = false;
         }
 
-        camReporter: CamReporter if hybridScenario {
+        hybridReporter: HybridReporter if hybridScenario {
             parameters:
                 @display("p=280,287");
         }
@@ -109,12 +109,12 @@ module RSU like INetworkNode
             wlan[i].upperLayerOut --> radioDriver[i].lowerLayerIn if !hybridScenario;
             wlan[i].upperLayerIn <-- radioDriver[i].lowerLayerOut if !hybridScenario;
 
-            camReporter.socketIn2 <-- wlan[i].upperLayerOut if hybridScenario;
-            radioDriver[i].lowerLayerIn <-- camReporter.socketOut2 if hybridScenario;
+            hybridReporter.socketIn2 <-- wlan[i].upperLayerOut if hybridScenario;
+            radioDriver[i].lowerLayerIn <-- hybridReporter.socketOut2 if hybridScenario;
 
-            radioDriver[i].lowerLayerOut --> camReporter.socketIn if hybridScenario;
-            camReporter.wlanOut --> wlan[i].upperLayerIn if hybridScenario;
-            camReporter.ethOut --> networkLayer.transportIn++ if hybridScenario;
+            radioDriver[i].lowerLayerOut --> hybridReporter.socketIn if hybridScenario;
+            hybridReporter.wlanOut --> wlan[i].upperLayerIn if hybridScenario;
+            hybridReporter.ethOut --> networkLayer.transportIn++ if hybridScenario;
 
             radioDriver[i].upperLayer <--> vanetza[i].radioDriverData;
             radioDriver[i].properties --> vanetza[i].radioDriverProperties;

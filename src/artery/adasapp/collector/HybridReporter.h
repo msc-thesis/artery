@@ -1,5 +1,5 @@
-#ifndef CamReporter_H_COLABPR9
-#define CamReporter_H_COLABPR9
+#ifndef HybridReporter_H_COLABPR9
+#define HybridReporter_H_COLABPR9
 
 #include <inet/transportlayer/contract/udp/UDPSocket.h>
 #include <omnetpp/clistener.h>
@@ -10,7 +10,7 @@
 namespace artery {
 namespace adasapp {
 
-class CamReporter : public omnetpp::cSimpleModule, public omnetpp::cListener
+class HybridReporter : public omnetpp::cSimpleModule, public omnetpp::cListener
 {
 protected:
     virtual int numInitStages() const override;
@@ -39,5 +39,5 @@ private:
 }
 }
 
-#endif /* CamReporter_H_COLABPR9 */
+#endif /* HybridReporter_H_COLABPR9 */
 

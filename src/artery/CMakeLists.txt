@@ -145,7 +145,7 @@ if(TARGET lte)
     set_property(TARGET core APPEND PROPERTY SOURCES
     lte/HybridSender.cc
     lte/HybridReceiver.cc
-    adasapp/collector/CamReporter.cc
+    adasapp/collector/HybridReporter.cc
     application/TestService.cc
     application/TestServiceStoryboard.cc
     )

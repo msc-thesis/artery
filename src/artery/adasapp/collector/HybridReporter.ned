@@ -1,11 +1,11 @@
 package artery.adasapp.collector;
 
-module CamReporter
+module HybridReporter
 {
     parameters:
         int centralPort = default(9320);
         string centralAddress;
-        @class(adasapp::CamReporter);
+        @class(adasapp::HybridReporter);
 
     gates:
         input socketIn;

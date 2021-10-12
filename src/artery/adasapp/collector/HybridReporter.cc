@@ -1,4 +1,4 @@
-#include "artery/adasapp/collector/CamReporter.h"
+#include "artery/adasapp/collector/HybridReporter.h"
 #include "artery/application/Middleware.h"
 #include "artery/application/StoryboardSignal.h"
 #include "artery/application/cpacket_byte_buffer_convertible.h"
@@ -17,11 +17,11 @@ using namespace omnetpp;
 namespace artery {
 namespace adasapp {
 
-Define_Module(CamReporter)
+Define_Module(HybridReporter)
 
 static const simsignal_t camRxSignal = cComponent::registerSignal("CamReceived");
 #include <iostream>
-void CamReporter::initialize(int stage)
+void HybridReporter::initialize(int stage)
 {
     // if (stage == artery::InitStages::Prepare) {
     //     camRx = 0;
@@ -42,17 +42,17 @@ void CamReporter::initialize(int stage)
     port = par("centralPort");
 }
 
-int CamReporter::numInitStages() const
+int HybridReporter::numInitStages() const
 {
     return inet::InitStages::INITSTAGE_LAST;
 }
 
-void CamReporter::finish()
+void HybridReporter::finish()
 {
     recordScalar("camRx", camRx);
 }
 
-void CamReporter::receiveSignal(cComponent*, simsignal_t sig, cObject* obj, cObject*)
+void HybridReporter::receiveSignal(cComponent*, simsignal_t sig, cObject* obj, cObject*)
 {
     Enter_Method_Silent();
     if (sig == camRxSignal) {
@@ -70,7 +70,7 @@ void CamReporter::receiveSignal(cComponent*, simsignal_t sig, cObject* obj, cObj
     }
 }
 
-void CamReporter::handleMessage(cMessage *msg) {
+void HybridReporter::handleMessage(cMessage *msg) {
     if (msg->getArrivalGate() == socketIn) {
         send(msg, wlanOut);
 
@@ -105,7 +105,7 @@ void CamReporter::handleMessage(cMessage *msg) {
     }
 }
 
-VanetRxControl* CamReporter::txToRxControl(VanetTxControl* ctrl) {
+VanetRxControl* HybridReporter::txToRxControl(VanetTxControl* ctrl) {
     VanetRxControl* tmp = new VanetRxControl();
     tmp->setSrc(ctrl->getSrc());
     tmp->setDest(ctrl->getDest());
