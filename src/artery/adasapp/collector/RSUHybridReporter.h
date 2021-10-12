@@ -1,5 +1,5 @@
-#ifndef HybridReporter_H_COLABPR9
-#define HybridReporter_H_COLABPR9
+#ifndef RSUHybridReporter_H_COLABPR9
+#define RSUHybridReporter_H_COLABPR9
 
 #include <inet/transportlayer/contract/udp/UDPSocket.h>
 #include <omnetpp/clistener.h>
@@ -10,13 +10,13 @@
 namespace artery {
 namespace adasapp {
 
-class HybridReporter : public omnetpp::cSimpleModule, public omnetpp::cListener
+class RSUHybridReporter : public omnetpp::cSimpleModule, public omnetpp::cListener
 {
 protected:
     virtual int numInitStages() const override;
     virtual void initialize(int stage) override;
-    virtual void finish() override;
-    virtual void receiveSignal(omnetpp::cComponent*, omnetpp::simsignal_t, omnetpp::cObject*, omnetpp::cObject*) override;
+        virtual void finish() override;
+    virtual void receiveSignal(omnetpp::cComponent*, omnetpp::simsignal_t, omnetpp::cObject*, omnetpp::cObject*) override {};
 
     virtual void handleMessage(omnetpp::cMessage *msg) override;
     VanetRxControl* txToRxControl(VanetTxControl* ctrl);
@@ -39,5 +39,5 @@ private:
 }
 }
 
-#endif /* HybridReporter_H_COLABPR9 */
+#endif /* RSUHybridReporter_H_COLABPR9 */
 

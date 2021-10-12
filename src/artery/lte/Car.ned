@@ -8,7 +8,7 @@ import inet.networklayer.contract.INetworkLayer;
 import inet.transportlayer.tcp.TCP;
 import inet.transportlayer.udp.UDP;
 import lte.stack.ILteNic;
-import artery.adasapp.collector.HybridReporter;
+import artery.adasapp.collector.CarHybridReporter;
 
 module Car extends artery.inet.Car
 {
@@ -62,7 +62,7 @@ module Car extends artery.inet.Car
             @display("p=350,125");
         }
 
-        hybridReporter: HybridReporter if hybridScenario {
+        hybridReporter: CarHybridReporter if hybridScenario {
             @display("p=250,300");
         }
 

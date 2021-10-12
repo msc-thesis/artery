@@ -10,7 +10,7 @@ import inet.mobility.contract.IMobility;
 import inet.networklayer.contract.IRoutingTable;
 import inet.networklayer.contract.INetworkLayer;
 import inet.networklayer.common.InterfaceTable;
-import artery.adasapp.collector.HybridReporter;
+import artery.adasapp.collector.RSUHybridReporter;
 
 module RSU like INetworkNode
 {
@@ -87,7 +87,7 @@ module RSU like INetworkNode
                 router.isMobile = false;
         }
 
-        hybridReporter: HybridReporter if hybridScenario {
+        hybridReporter: RSUHybridReporter if hybridScenario {
             parameters:
                 @display("p=280,287");
         }

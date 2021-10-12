@@ -1,4 +1,4 @@
-#include "artery/adasapp/collector/HybridReporter.h"
+#include "artery/adasapp/collector/RSUHybridReporter.h"
 #include "artery/application/Middleware.h"
 #include "artery/application/StoryboardSignal.h"
 #include "artery/application/cpacket_byte_buffer_convertible.h"
@@ -17,22 +17,12 @@ using namespace omnetpp;
 namespace artery {
 namespace adasapp {
 
-Define_Module(HybridReporter)
+Define_Module(RSUHybridReporter)
 
 static const simsignal_t camRxSignal = cComponent::registerSignal("CamReceived");
 #include <iostream>
-void HybridReporter::initialize(int stage)
+void RSUHybridReporter::initialize(int stage)
 {
-    // if (stage == artery::InitStages::Prepare) {
-    //     camRx = 0;
-    // } else if (stage == inet::InitStages::INITSTAGE_APPLICATION_LAYER) {
-    //     socket.setOutputGate(gate("socketOut"));
-    //     auto centralAddress = inet::L3AddressResolver().resolve(par("centralAddress"));
-    //     socket.connect(centralAddress, par("centralPort"));
-
-    //     auto mw = inet::getModuleFromPar<artery::Middleware>(par("middlewareModule"), this);
-    //     mw->subscribe(camRxSignal, this);
-    // }
     socketIn = gate("socketIn");
     wlanOut = gate("wlanOut");
     ethOut = gate("ethOut");
@@ -42,35 +32,17 @@ void HybridReporter::initialize(int stage)
     port = par("centralPort");
 }
 
-int HybridReporter::numInitStages() const
+int RSUHybridReporter::numInitStages() const
 {
     return inet::InitStages::INITSTAGE_LAST;
 }
 
-void HybridReporter::finish()
+void RSUHybridReporter::finish()
 {
     recordScalar("camRx", camRx);
 }
 
-void HybridReporter::receiveSignal(cComponent*, simsignal_t sig, cObject* obj, cObject*)
-{
-    Enter_Method_Silent();
-    if (sig == camRxSignal) {
-        ++camRx;
-
-        auto* cam = dynamic_cast<artery::CaObject*>(obj);
-        //if(cam != nullptr) std::cout << cam->asn1()->header.stationID << std::endl;
-
-        if(cam) {
-            // inet::B size((int64_t) cam->asn1().size());
-            //std::cout << cam->asn1().size() << std::endl;
-            // socket.send(new inet::Packet("DummyCamLog", 
-            //             inet::makeShared<inet::ByteCountChunk>(inet::ByteCountChunk(size))));
-        }
-    }
-}
-
-void HybridReporter::handleMessage(cMessage *msg) {
+void RSUHybridReporter::handleMessage(cMessage *msg) {
     if (msg->getArrivalGate() == socketIn) {
         send(msg, wlanOut);
 
@@ -105,7 +77,7 @@ void HybridReporter::handleMessage(cMessage *msg) {
     }
 }
 
-VanetRxControl* HybridReporter::txToRxControl(VanetTxControl* ctrl) {
+VanetRxControl* RSUHybridReporter::txToRxControl(VanetTxControl* ctrl) {
     VanetRxControl* tmp = new VanetRxControl();
     tmp->setSrc(ctrl->getSrc());
     tmp->setDest(ctrl->getDest());
