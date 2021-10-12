@@ -1,26 +1,18 @@
 #include "artery/adasapp/collector/CarHybridReporter.h"
-#include "artery/application/Middleware.h"
-#include "artery/application/StoryboardSignal.h"
-#include "artery/application/cpacket_byte_buffer_convertible.h"
-#include "artery/traci/VehicleController.h"
-#include "artery/utility/InitStages.h"
-#include "artery/utility/PointerCheck.h"
-#include <inet/common/ModuleAccess.h>
-#include <inet/networklayer/common/L3AddressResolver.h>
-#include <omnetpp/checkandcast.h>
-#include "artery/networking/GeoNetPacket.h"
-#include <inet/networklayer/contract/ipv4/IPv4ControlInfo.h>
+#include "inet/networklayer/common/L3AddressResolver.h"
+#include "inet/networklayer/contract/ipv4/IPv4ControlInfo.h"
 #include "inet/transportlayer/udp/UDPPacket.h"
 
 using namespace omnetpp;
 
-namespace artery {
-namespace adasapp {
+namespace artery
+{
+
+namespace adasapp
+{
 
 Define_Module(CarHybridReporter)
 
-static const simsignal_t camRxSignal = cComponent::registerSignal("CamReceived");
-#include <iostream>
 void CarHybridReporter::initialize(int stage)
 {
     radioDriverIn = gate("radioDriverGate$i");
@@ -91,5 +83,5 @@ VanetRxControl* CarHybridReporter::txToRxControl(VanetTxControl* ctrl) {
     return tmp;
 }
 
-}
-}
+} // adasapp
+} // artery
