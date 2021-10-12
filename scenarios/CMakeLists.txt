@@ -29,6 +29,8 @@ if(TARGET lte)
     add_opp_run(simulte WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/simulte)
     add_opp_test(simulte SUFFIX cellular CONFIG VoIP-UpLink SIMTIME_LIMIT 10s)
     add_opp_test(simulte SUFFIX d2d CONFIG AlertMulticast SIMTIME_LIMIT 25s)
+    add_opp_run(hybrid WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/hybrid)
+    add_opp_test(hybrid SUFFIX cellular CONFIG M0 SIMTIME_LIMIT 30s)
 endif()
 
 if(TARGET lte AND WITH_STORYBOARD)
