@@ -91,10 +91,11 @@ module Car extends artery.inet.Car
 
         for i=0..sizeof(radioIn)-1 {
             hybridReporter.wlanGate$i <-- wlan[i].upperLayerOut if hybridScenario;
-            radioDriver[i].lowerLayerIn <-- hybridReporter.radioDriverGate$o if hybridScenario;
-            
-            radioDriver[i].lowerLayerOut --> hybridReporter.radioDriverGate$i if hybridScenario;
             hybridReporter.wlanGate$o --> wlan[i].upperLayerIn if hybridScenario;
-            //hybridReporter.lteGate$o --> networkLayer.transportIn++ if hybridScenario;
+            
+            hybridReporter.radioDriverGate$i <-- radioDriver[i].lowerLayerOut if hybridScenario;
+            hybridReporter.radioDriverGate$o --> radioDriver[i].lowerLayerIn if hybridScenario;
+            
+            hybridReporter.lteGate$o --> networkLayer.transportIn++ if hybridScenario;
         }
 }

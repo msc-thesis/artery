@@ -38,13 +38,10 @@ void CarHybridReporter::handleMessage(cMessage *msg) {
     if (msg->getArrivalGate() == radioDriverIn) {
         send(msg, wlanOut);
 
-        if (centralPort == 9320)
-            return;
-
         inet::IPv4ControlInfo* ipCtrl = new inet::IPv4ControlInfo();
         ipCtrl->setDestAddr(inet::L3AddressResolver().resolve(par("centralAddress").stringValue()).toIPv4());
         ipCtrl->setProtocol(inet::IP_PROT_UDP);
-        ipCtrl->setTimeToLive(1);
+        ipCtrl->setTimeToLive(10);
         
         auto* ethCopy = msg->dup();
         ethCopy->setName("GeoNet from Car");

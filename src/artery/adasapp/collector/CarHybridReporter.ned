@@ -4,7 +4,7 @@ module CarHybridReporter
 {
     parameters:
         string centralAddress;
-        int centralPort = default(9320);
+        int centralPort = default(3000);
         @class(adasapp::CarHybridReporter);
 
     gates:
