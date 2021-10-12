@@ -43,7 +43,7 @@ class HybridSender : public cSimpleModule
 
 };
 
-}
+} // artery
 
 #endif
 
