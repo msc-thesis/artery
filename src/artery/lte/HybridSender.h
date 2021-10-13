@@ -25,7 +25,9 @@ class HybridSender : public cSimpleModule
     inet::UDPSocket socket;
     int localPort_;
     int destPort_;
-    inet::L3Address destAddress_;
+    std::set<inet::L3Address> addresses;
+
+    void sendPacket(cPacket* packet);
 
   protected:
     virtual int numInitStages() const { return inet::NUM_INIT_STAGES; }

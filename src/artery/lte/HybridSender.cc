@@ -31,21 +31,26 @@ void HybridSender::initialize(int stage)
 void HybridSender::handleMessage(cMessage *msg)
 {
     if (!msg->isSelfMessage()) {
-        const char* destAddress = par("destAddress").stringValue();
-
         inet::UDPDataIndication* udpControlInfo = check_and_cast<inet::UDPDataIndication*>(msg->removeControlInfo());
         inet::L3Address srcAddr = udpControlInfo->getSrcAddr();
 
-        cModule* destModule = getModuleByPath(destAddress);
+        if (srcAddr.getPrefix(16) != inet::L3Address("192.168.0.0"))
+            addresses.insert(srcAddr);
 
-        if (destModule != nullptr) {
-            destAddress_ = inet::L3AddressResolver().resolve(destAddress);
-            msg->removeControlInfo();
-            socket.sendTo(check_and_cast<cPacket*>(msg), destAddress_, destPort_);
-        } else {
-            delete msg;
-        }
+        sendPacket(check_and_cast<cPacket*>(msg));
     }
+}
+
+void HybridSender::sendPacket(cPacket* packet)
+{
+    std::set<inet::L3Address>::iterator itr;
+
+    for (itr = addresses.begin(); itr != addresses.end(); itr++)
+    {
+        auto* tmp = packet->dup();
+        socket.sendTo(tmp, *itr, destPort_);
+    }
+    delete packet;
 }
 
 } // artery
