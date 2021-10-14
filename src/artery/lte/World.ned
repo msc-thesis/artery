@@ -65,10 +65,6 @@ network World extends artery.inet.World
             eNodeB[i].x2++ <--> Eth10G <--> eNodeB[i+1].x2++;
         }
 
-        if hybridScenario {
-            eNodeB[numLteBaseStations-1].x2++ <--> Eth10G <--> eNodeB[0].x2++;
-        }
-
         for i = 0..numLteBaseStations-1 {
             pgw.pppg++ <--> Eth10G <--> eNodeB[i].ppp;
         }
