@@ -8,6 +8,11 @@ namespace artery
 
 Define_Module(HybridSender);
 
+HybridSender::~HybridSender()
+{
+    delete resolver;
+}
+
 void HybridSender::initialize(int stage)
 {
     EV << "VoIP Sender initialize: stage " << stage << endl;
@@ -20,7 +25,7 @@ void HybridSender::initialize(int stage)
 
     localPort_ = par("localPort");
     destPort_ = par("destPort");
-
+    resolver = new inet::L3AddressResolver();
 
     EV << "HybridSender::initialize - binding to port: local:" << localPort_ << endl;
 
@@ -33,13 +38,13 @@ void HybridSender::handleMessage(cMessage *msg)
     if (msg->isSelfMessage())
         return;
     
-        inet::UDPDataIndication* udpControlInfo = check_and_cast<inet::UDPDataIndication*>(msg->removeControlInfo());
-        inet::L3Address srcAddr = udpControlInfo->getSrcAddr();
+    inet::UDPDataIndication* udpControlInfo = check_and_cast<inet::UDPDataIndication*>(msg->removeControlInfo());
+    inet::L3Address srcAddr = udpControlInfo->getSrcAddr();
 
-        if (srcAddr.getPrefix(16) != inet::L3Address("192.168.0.0"))
-            addresses.insert(srcAddr);
+    if (srcAddr.getPrefix(16) != inet::L3Address("192.168.0.0"))
+        addresses.insert(srcAddr);
 
-        sendPacket(check_and_cast<cPacket*>(msg));
+    sendPacket(check_and_cast<cPacket*>(msg));
 }
 
 void HybridSender::sendPacket(cPacket* packet)
@@ -48,8 +53,11 @@ void HybridSender::sendPacket(cPacket* packet)
 
     for (itr = addresses.begin(); itr != addresses.end(); itr++)
     {
-        auto* tmp = packet->dup();
-        socket.sendTo(tmp, *itr, destPort_);
+        if (resolver->findHostWithAddress(*itr))
+        {
+            auto* tmp = packet->dup();
+            socket.sendTo(tmp, *itr, destPort_);
+        }
     }
     delete packet;
 }

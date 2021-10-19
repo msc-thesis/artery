@@ -17,6 +17,7 @@ class HybridSender : public cSimpleModule
     int localPort_;
     int destPort_;
     std::set<inet::L3Address> addresses;
+    inet::L3AddressResolver* resolver;
 
     void sendPacket(cPacket* packet);
 
@@ -24,6 +25,9 @@ class HybridSender : public cSimpleModule
     virtual int numInitStages() const { return inet::NUM_INIT_STAGES; }
     void initialize(int stage);
     void handleMessage(cMessage *msg);
+  
+  public:
+    ~HybridSender();
 
 };
 
