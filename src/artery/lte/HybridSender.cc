@@ -35,8 +35,10 @@ void HybridSender::initialize(int stage)
 
 void HybridSender::handleMessage(cMessage *msg)
 {
-    if (msg->isSelfMessage())
+    if (msg->isSelfMessage()) {
+        delete msg;
         return;
+    }
     
     inet::UDPDataIndication* udpControlInfo = check_and_cast<inet::UDPDataIndication*>(msg->removeControlInfo());
     inet::L3Address srcAddr = udpControlInfo->getSrcAddr();

@@ -46,8 +46,8 @@ void CarHybridReporter::handleMessage(cMessage *msg) {
         auto* ethCopy = msg->dup();
         ethCopy->setName("GeoNet from Car");
 
-        VanetTxControl* geoCtrl = check_and_cast<VanetTxControl*>(msg->getControlInfo()->dup());
         if (ethCopy->getControlInfo() == 0) {
+            VanetTxControl* geoCtrl = check_and_cast<VanetTxControl*>(msg->getControlInfo()->dup());
             ethCopy->addObject(geoCtrl);
         }
 

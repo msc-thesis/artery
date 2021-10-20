@@ -25,7 +25,10 @@ void HybridReceiver::initialize(int stage)
 void HybridReceiver::handleMessage(cMessage *msg)
 {
     if (msg->isSelfMessage())
+    {
+        delete msg;
         return;
+    }
 
     send(msg, geoNetOut);
 }
