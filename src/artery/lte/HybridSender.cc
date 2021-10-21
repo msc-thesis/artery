@@ -10,6 +10,7 @@ Define_Module(HybridSender);
 
 HybridSender::~HybridSender()
 {
+    addresses.clear();
     delete resolver;
 }
 
@@ -47,6 +48,8 @@ void HybridSender::handleMessage(cMessage *msg)
         addresses.insert(srcAddr);
 
     sendPacket(check_and_cast<cPacket*>(msg));
+
+    delete udpControlInfo;
 }
 
 void HybridSender::sendPacket(cPacket* packet)

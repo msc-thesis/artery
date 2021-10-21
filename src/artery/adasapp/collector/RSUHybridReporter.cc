@@ -58,6 +58,8 @@ void RSUHybridReporter::handleMessage(cMessage *msg) {
         send(packet, ethOut);
     } else if (msg->getArrivalGate() == wlanIn) {
         send(msg, radioDriverOut);
+    } else {
+        delete msg;
     }
 }
 

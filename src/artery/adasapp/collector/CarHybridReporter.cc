@@ -60,9 +60,12 @@ void CarHybridReporter::handleMessage(cMessage *msg) {
         send(msg, radioDriverOut);
     } else if (msg->getArrivalGate() == lteIn) {
         VanetRxControl* ctrl = txToRxControl(check_and_cast<VanetTxControl*>(msg->getObject("")));
-        msg->removeControlInfo();
+        cObject* tmp = msg->removeControlInfo();
+        delete tmp;
         msg->setControlInfo(ctrl);
         send(msg, radioDriverOut);
+    } else {
+        delete msg;
     }
 }
 
