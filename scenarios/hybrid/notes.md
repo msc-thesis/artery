@@ -14,3 +14,20 @@ The LTE network works the following way:
 7. Even if the stations cover the whole area with 3 km long radii that are overlapping, the last eNodeB will throw an error
 8. There is a switch that makes the model tolerate this
 9. Since the node will always talk to the nearest eNodeB, and handover works correctly, this will probably not alter the model significantly.
+
+## 2021-10-21
+
+configure Artery for Debug mode:
+```
+cmake -DCMAKE_BUILD_TYPE=Debug  ..
+```
+
+configure Artery for Debug mode, with Cmdenv:
+```
+cmake -DCMAKE_BUILD_TYPE=Debug -DRUN_FLAGS="-u Cmdenv" ..
+```
+
+build Artery:
+cmake --build .
+
+6 836 425
