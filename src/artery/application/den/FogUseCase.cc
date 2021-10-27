@@ -2,11 +2,44 @@
 #include "artery/application/DenService.h"
 #include "artery/application/StoryboardSignal.h"
 #include "artery/application/VehicleDataProvider.h"
+#include <boost/units/systems/si/prefixes.hpp>
+#include <math.h>
 
 namespace artery
 {
 namespace den
 {
+
+static const auto microdegree = vanetza::units::degree * boost::units::si::micro;
+
+template<typename T, typename U>
+long round(const boost::units::quantity<T>& q, const U& u)
+{
+    boost::units::quantity<U> v { q };
+    return std::round(v.value());
+}
+
+double deg2rad(double deg)
+{
+    return deg / 180 * M_PI;
+}
+
+// Distance between two points on the surface of earth according to the Haversine formula
+double distance(double lat1, double lon1, double lat2, double lon2)
+{
+    // Radius of the Earth in meters, because we want to return the distance in meters
+    double R = 6371000;
+    double dLat = deg2rad(lat2 - lat1);
+    double dLon = deg2rad(lon2 - lon1);
+    double a = 
+        sin(dLat / 2) * sin(dLat / 2) +
+        cos(deg2rad(lat1)) * cos(deg2rad(lat2)) *
+        sin(dLon / 2) * sin(dLon / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    double d = R * c;
+
+    return d;
+}
 
 Define_Module(artery::den::FogUseCase)
 
@@ -35,6 +68,14 @@ void FogUseCase::indicate(const artery::DenmObject& denm)
 
     if (asn1->denm.situation->eventType.causeCode == CauseCodeType_adverseWeatherCondition_Visibility)
     {
+        double vehicleLatitude = round(mVdp->latitude(), microdegree) * Latitude_oneMicrodegreeNorth / 10000000.0;
+        double vehicleLongitude = round(mVdp->longitude(), microdegree) * Longitude_oneMicrodegreeEast / 10000000.0;
+        double eventLatitude = asn1->denm.management.eventPosition.latitude / 10000000.0;
+        double eventLongitude = asn1->denm.management.eventPosition.longitude / 10000000.0;
+
+        double dist = distance(vehicleLatitude, vehicleLongitude, eventLatitude, eventLongitude);
+        printf("Dist: %f\n", dist);
+        
         printf("FOG indicated !!!\n");
     }
 }
