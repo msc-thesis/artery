@@ -1,11 +1,11 @@
-package artery.adasapp.collector;
+package artery.hybrid.collector;
 
 module RSUHybridReporter
 {
     parameters:
         string centralAddress;
         int centralPort = default(3000);
-        @class(adasapp::RSUHybridReporter);
+        @class(hybrid::RSUHybridReporter);
 
     gates:
         inout radioDriverGate;

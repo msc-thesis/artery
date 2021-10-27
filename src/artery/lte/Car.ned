@@ -8,7 +8,6 @@ import inet.networklayer.contract.INetworkLayer;
 import inet.transportlayer.tcp.TCP;
 import inet.transportlayer.udp.UDP;
 import lte.stack.ILteNic;
-import artery.adasapp.collector.CarHybridReporter;
 
 module Car extends artery.inet.Car
 {
@@ -62,10 +61,6 @@ module Car extends artery.inet.Car
             @display("p=350,125");
         }
 
-        hybridReporter: CarHybridReporter if hybridScenario {
-            @display("p=250,300");
-        }
-
     connections allowunconnected:
         lteNic.radioIn <-- lteRadioIn;
 
@@ -75,7 +70,6 @@ module Car extends artery.inet.Car
         for i = 0..numUdpApps-1 {
             udpApp[i].udpOut --> udp.appIn++;
             udpApp[i].udpIn <-- udp.appOut++;
-            udpApp[i].geoNetOut --> hybridReporter.lteGate$i if hybridScenario;
         }
 
         udp.ipOut --> networkLayer.transportIn++ if numUdpApps > 0;
@@ -87,15 +81,5 @@ module Car extends artery.inet.Car
         }
 
         tcp.ipOut --> networkLayer.transportIn++ if numTcpApps > 0;
-        tcp.ipIn <-- networkLayer.transportout++ if numTcpApps > 0;
-
-        for i=0..sizeof(radioIn)-1 {
-            hybridReporter.wlanGate$i <-- wlan[i].upperLayerOut if hybridScenario;
-            hybridReporter.wlanGate$o --> wlan[i].upperLayerIn if hybridScenario;
-            
-            hybridReporter.radioDriverGate$i <-- radioDriver[i].lowerLayerOut if hybridScenario;
-            hybridReporter.radioDriverGate$o --> radioDriver[i].lowerLayerIn if hybridScenario;
-            
-            hybridReporter.lteGate$o --> networkLayer.transportIn++ if hybridScenario;
-        }
+        tcp.ipIn <-- networkLayer.transportout++ if numTcpApps > 0;           
 }

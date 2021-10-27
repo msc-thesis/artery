@@ -8,14 +8,11 @@ import lte.corenetwork.binder.LteBinder;
 import lte.corenetwork.nodes.eNodeB;
 import lte.epc.PgwStandardSimplified;
 import lte.world.radio.LteChannelControl;
-import artery.lte.TMC;
 
 network World extends artery.inet.World
 {
     parameters:
-        @display("bgb=15000,5000;bgg=1000,2,grey95;bgu=m");
         int numLteBaseStations = default(1);
-        bool hybridScenario = default(false);
         traci.mapper.vehicleType = default("artery.lte.Car");
 
     submodules:
@@ -56,9 +53,6 @@ network World extends artery.inet.World
             @display("p=600,400;i=device/smallrouter");
         }
 
-        tmc: TMC if hybridScenario {
-            @display("p=1600,400");
-        }
 
     connections allowunconnected:
         for i = 0..numLteBaseStations-2 {
@@ -72,11 +66,4 @@ network World extends artery.inet.World
         server.pppg++ <--> Eth10G <--> router.pppg++;
         router.pppg++ <--> Eth10G <--> pgw.filterGate;
 
-        if hybridScenario {
-            router.pppg++ <--> Eth10G <--> tmc.pppg++;
-        }
-
-        for i = 0..numRoadSideUnits-1 {
-            rsu[i].ethg++ <--> Eth10G <--> tmc.ethg++ if hybridScenario;
-        }
 }

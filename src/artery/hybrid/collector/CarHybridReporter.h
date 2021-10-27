@@ -9,7 +9,7 @@
 namespace artery
 {
 
-namespace adasapp
+namespace hybrid 
 {
 
 class CarHybridReporter : public omnetpp::cSimpleModule, public omnetpp::cListener
@@ -33,7 +33,7 @@ private:
     int camRx;
 };
 
-} // adasapp
+} // hybrid
 } // artery
 
 #endif /* CarHybridReporter_H */

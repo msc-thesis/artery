@@ -1,67 +1,87 @@
-#include "artery/adasapp/collector/RSUHybridReporter.h"
+#include "artery/hybrid/collector/CarHybridReporter.h"
 #include "inet/networklayer/common/L3AddressResolver.h"
 #include "inet/networklayer/contract/ipv4/IPv4ControlInfo.h"
 #include "inet/transportlayer/udp/UDPPacket.h"
-#include "artery/inet/VanetTxControl.h"
 
 using namespace omnetpp;
 
 namespace artery
 {
 
-namespace adasapp
+namespace hybrid
 {
 
-Define_Module(RSUHybridReporter)
+Define_Module(CarHybridReporter)
 
-void RSUHybridReporter::initialize(int stage)
+void CarHybridReporter::initialize(int stage)
 {
     radioDriverIn = gate("radioDriverGate$i");
     radioDriverOut = gate("radioDriverGate$o");
     wlanIn = gate("wlanGate$i");
     wlanOut = gate("wlanGate$o");
-    ethOut = gate("ethOut");
+    lteIn = gate("lteGate$i");
+    lteOut = gate("lteGate$o");
     centralPort = par("centralPort");
 }
 
-int RSUHybridReporter::numInitStages() const
+int CarHybridReporter::numInitStages() const
 {
     return inet::InitStages::INITSTAGE_LAST;
 }
 
-void RSUHybridReporter::finish()
+void CarHybridReporter::finish()
 {
     recordScalar("camRx", camRx);
 }
 
-void RSUHybridReporter::handleMessage(cMessage *msg) {
+void CarHybridReporter::handleMessage(cMessage *msg) {
     if (msg->getArrivalGate() == radioDriverIn) {
         send(msg, wlanOut);
 
         inet::IPv4ControlInfo* ipCtrl = new inet::IPv4ControlInfo();
         ipCtrl->setDestAddr(inet::L3AddressResolver().resolve(par("centralAddress").stringValue()).toIPv4());
         ipCtrl->setProtocol(inet::IP_PROT_UDP);
-        ipCtrl->setTimeToLive(1);
+        ipCtrl->setTimeToLive(10);
         
         auto* ethCopy = msg->dup();
-        ethCopy->setName("GeoNet from RSU");
+        ethCopy->setName("GeoNet from Car");
 
         if (ethCopy->getControlInfo() == 0) {
             VanetTxControl* geoCtrl = check_and_cast<VanetTxControl*>(msg->getControlInfo()->dup());
             ethCopy->addObject(geoCtrl);
         }
 
-        inet::UDPPacket* packet = new inet::UDPPacket("UDP from RSU");
+        inet::UDPPacket* packet = new inet::UDPPacket("UDP from Car");
         packet->setDestinationPort(centralPort);
         packet->setControlInfo(ipCtrl);
         packet->encapsulate(check_and_cast<cPacket*>(ethCopy));
-        send(packet, ethOut);
+        send(packet, lteOut);
     } else if (msg->getArrivalGate() == wlanIn) {
+        send(msg, radioDriverOut);
+    } else if (msg->getArrivalGate() == lteIn) {
+        VanetRxControl* ctrl = txToRxControl(check_and_cast<VanetTxControl*>(msg->getObject("")));
+        cObject* tmp = msg->removeControlInfo();
+        delete tmp;
+        msg->setControlInfo(ctrl);
         send(msg, radioDriverOut);
     } else {
         delete msg;
     }
 }
 
-} // adasapp
+VanetRxControl* CarHybridReporter::txToRxControl(VanetTxControl* ctrl) {
+    VanetRxControl* tmp = new VanetRxControl();
+    tmp->setSrc(ctrl->getSrc());
+    tmp->setDest(ctrl->getDest());
+    tmp->setEtherType(ctrl->getEtherType());
+    tmp->setInterfaceId(ctrl->getInterfaceId());
+    tmp->setSwitchPort(ctrl->getSwitchPort());
+    tmp->setUserPriority(ctrl->getUserPriority());
+    tmp->setSsap(ctrl->getSsap());
+    tmp->setDsap(ctrl->getDsap());
+    tmp->setPauseUnits(ctrl->getPauseUnits());
+    return tmp;
+}
+
+} // hybrid
 } // artery

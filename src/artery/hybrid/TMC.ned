@@ -1,4 +1,4 @@
-package artery.lte;
+package artery.hybrid;
 
 import inet.node.inet.StandardHost;
 import artery.networking.Vanetza;
