@@ -1,4 +1,0 @@
-<vehicles>
-    <vehicle type="artery.hybrid.Car" rate="0.3" />
-    <vehicle type="artery.inet.PlainVehicle" rate="0.7" />
-</vehicles>
