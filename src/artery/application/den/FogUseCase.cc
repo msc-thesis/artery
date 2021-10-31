@@ -81,23 +81,26 @@ void FogUseCase::indicate(const artery::DenmObject& denm)
     
     const vanetza::asn1::Denm& asn1 = denm.asn1();
 
-    if (asn1->denm.situation->eventType.causeCode == CauseCodeType_adverseWeatherCondition_Visibility)
-    {
-        double vehicleLatitude = round(mVdp->latitude(), microdegree) * Latitude_oneMicrodegreeNorth / 10000000.0;
-        double vehicleLongitude = round(mVdp->longitude(), microdegree) * Longitude_oneMicrodegreeEast / 10000000.0;
-        double eventLatitude = asn1->denm.management.eventPosition.latitude / 10000000.0;
-        double eventLongitude = asn1->denm.management.eventPosition.longitude / 10000000.0;
+    if (asn1->denm.situation->eventType.causeCode != CauseCodeType_adverseWeatherCondition_Visibility)
+        return;
 
-        if (contains(positions, asn1->denm.management.eventPosition))
-            return;
+    double vehicleLatitude = round(mVdp->latitude(), microdegree) * Latitude_oneMicrodegreeNorth / 10000000.0;
+    double vehicleLongitude = round(mVdp->longitude(), microdegree) * Longitude_oneMicrodegreeEast / 10000000.0;
+    double eventLatitude = asn1->denm.management.eventPosition.latitude / 10000000.0;
+    double eventLongitude = asn1->denm.management.eventPosition.longitude / 10000000.0;
 
-        positions.push_back(asn1->denm.management.eventPosition);
+    if (contains(positions, asn1->denm.management.eventPosition))
+        return;
 
-        double dist = distance(vehicleLatitude, vehicleLongitude, eventLatitude, eventLongitude);
-        printf("Dist: %f\n", dist);
-        
-        printf("FOG indicated !!!\n");
-    }
+    positions.push_back(asn1->denm.management.eventPosition);
+
+    double dist = distance(vehicleLatitude, vehicleLongitude, eventLatitude, eventLongitude);
+
+    if (dist > 500)
+        printf("Dist: %f, I'm well informed\n", dist);
+
+    printf("FOG indicated !!!\n");
+
 }
 
 void FogUseCase::transmitMessage()
