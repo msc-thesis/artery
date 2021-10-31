@@ -41,7 +41,12 @@ double distance(double lat1, double lon1, double lat2, double lon2)
     return d;
 }
 
-Define_Module(artery::den::FogUseCase)
+Define_Module(artery::den::FogUseCase);
+
+FogUseCase::~FogUseCase()
+{
+    positions.clear();
+}
 
 void FogUseCase::initialize(int stage)
 {
@@ -60,6 +65,16 @@ void FogUseCase::check()
     }
 }
 
+bool contains(std::vector<ReferencePosition_t> container, ReferencePosition_t element)
+{
+    for (auto itr = container.begin(); itr != container.end(); itr++)
+    {
+        if (itr->latitude == element.latitude && itr->longitude == element.longitude)
+            return true;
+    }
+    return false;
+}
+
 void FogUseCase::indicate(const artery::DenmObject& denm)
 {
     Enter_Method("FogUseCase: indicate");
@@ -72,6 +87,11 @@ void FogUseCase::indicate(const artery::DenmObject& denm)
         double vehicleLongitude = round(mVdp->longitude(), microdegree) * Longitude_oneMicrodegreeEast / 10000000.0;
         double eventLatitude = asn1->denm.management.eventPosition.latitude / 10000000.0;
         double eventLongitude = asn1->denm.management.eventPosition.longitude / 10000000.0;
+
+        if (contains(positions, asn1->denm.management.eventPosition))
+            return;
+
+        positions.push_back(asn1->denm.management.eventPosition);
 
         double dist = distance(vehicleLatitude, vehicleLongitude, eventLatitude, eventLongitude);
         printf("Dist: %f\n", dist);

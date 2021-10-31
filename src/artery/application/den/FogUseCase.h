@@ -3,6 +3,7 @@
 
 #include "artery/application/den/SuspendableUseCase.h"
 #include <vanetza/btp/data_request.hpp>
+#include "vanetza/asn1/its/ReferencePosition.h"
 
 namespace artery
 {
@@ -12,6 +13,8 @@ namespace den
 class FogUseCase : public SuspendableUseCase
 {
 public:
+    ~FogUseCase();
+
     void check() override;
     void indicate(const artery::DenmObject&) override;
     void handleStoryboardTrigger(const StoryboardSignal&) override;
@@ -24,6 +27,7 @@ protected:
 
 private:
     bool mPendingSignal = false;
+    std::vector<ReferencePosition_t> positions;
     void transmitMessage();
 };
 
