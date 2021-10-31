@@ -2,8 +2,11 @@ package artery.hybrid;
 
 import artery.hybrid.collector.CarHybridReporter;
 
-module Car extends artery.lte.Car 
+module Car extends artery.lte.Car
 {
+    parameters:
+        @display("r=1000");
+
     submodules:
         hybridReporter: CarHybridReporter {
             @display("p=250,300");
