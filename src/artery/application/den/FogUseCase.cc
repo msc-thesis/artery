@@ -41,6 +41,37 @@ double distance(double lat1, double lon1, double lat2, double lon2)
     return d;
 }
 
+bool contains(std::vector<ReferencePosition_t> container, ReferencePosition_t element)
+{
+    for (auto itr = container.begin(); itr != container.end(); itr++)
+    {
+        if (itr->latitude == element.latitude && itr->longitude == element.longitude)
+            return true;
+    }
+    return false;
+}
+
+StationType_t castStationType(VehicleDataProvider::StationType inType)
+{
+    switch (inType)
+    {
+        case VehicleDataProvider::StationType::Unknown: return StationType_unknown;
+        case VehicleDataProvider::StationType::Pedestrian: return StationType_pedestrian;
+        case VehicleDataProvider::StationType::Cyclist: return StationType_cyclist;
+        case VehicleDataProvider::StationType::Moped: return StationType_moped;
+        case VehicleDataProvider::StationType::Motorcycle: return StationType_motorcycle;
+        case VehicleDataProvider::StationType::Passenger_Car: return StationType_passengerCar;
+        case VehicleDataProvider::StationType::Bus: return StationType_bus;
+        case VehicleDataProvider::StationType::Light_Truck: return StationType_lightTruck;
+        case VehicleDataProvider::StationType::Heavy_Truck: return StationType_heavyTruck;
+        case VehicleDataProvider::StationType::Trailer: return StationType_trailer;
+        case VehicleDataProvider::StationType::Special_Vehicle: return StationType_specialVehicles;
+        case VehicleDataProvider::StationType::Tram: return StationType_tram;
+        case VehicleDataProvider::StationType::RSU: return StationType_roadSideUnit;
+        default: return StationType_unknown;
+    }
+}
+
 Define_Module(artery::den::FogUseCase);
 
 FogUseCase::~FogUseCase()
@@ -63,16 +94,6 @@ void FogUseCase::check()
         printf("FOG !!!\n");
         transmitMessage();
     }
-}
-
-bool contains(std::vector<ReferencePosition_t> container, ReferencePosition_t element)
-{
-    for (auto itr = container.begin(); itr != container.end(); itr++)
-    {
-        if (itr->latitude == element.latitude && itr->longitude == element.longitude)
-            return true;
-    }
-    return false;
 }
 
 void FogUseCase::indicate(const artery::DenmObject& denm)
@@ -130,7 +151,7 @@ vanetza::asn1::Denm FogUseCase::createMessage()
     *msg->denm.management.relevanceTrafficDirection = RelevanceTrafficDirection_allTrafficDirections;
     msg->denm.management.validityDuration = vanetza::asn1::allocate<ValidityDuration_t>();
     *msg->denm.management.validityDuration = 600;
-    msg->denm.management.stationType = StationType_unknown; // TODO retrieve type from SUMO
+    msg->denm.management.stationType = castStationType(mVdp->getStationType());
 
     msg->denm.situation = vanetza::asn1::allocate<SituationContainer_t>();
     msg->denm.situation->informationQuality = 1;
