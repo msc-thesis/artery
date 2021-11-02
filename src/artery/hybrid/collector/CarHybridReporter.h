@@ -30,7 +30,6 @@ private:
     omnetpp::cGate* lteIn;
     omnetpp::cGate* lteOut;
     int centralPort;
-    int camRx;
 };
 
 } // hybrid

@@ -29,10 +29,7 @@ int RSUHybridReporter::numInitStages() const
     return inet::InitStages::INITSTAGE_LAST;
 }
 
-void RSUHybridReporter::finish()
-{
-    recordScalar("camRx", camRx);
-}
+void RSUHybridReporter::finish() {}
 
 void RSUHybridReporter::handleMessage(cMessage *msg) {
     if (msg->getArrivalGate() == radioDriverIn) {

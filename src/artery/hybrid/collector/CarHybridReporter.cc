@@ -29,10 +29,7 @@ int CarHybridReporter::numInitStages() const
     return inet::InitStages::INITSTAGE_LAST;
 }
 
-void CarHybridReporter::finish()
-{
-    recordScalar("camRx", camRx);
-}
+void CarHybridReporter::finish() {}
 
 void CarHybridReporter::handleMessage(cMessage *msg) {
     if (msg->getArrivalGate() == radioDriverIn) {

@@ -26,7 +26,6 @@ private:
     omnetpp::cGate* wlanOut;
     omnetpp::cGate* ethOut;
     int centralPort;
-    int camRx;
 };
 
 } // hybrid
