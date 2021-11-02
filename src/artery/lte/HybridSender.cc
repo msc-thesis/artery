@@ -40,14 +40,17 @@ void HybridSender::handleMessage(cMessage *msg)
         delete msg;
         return;
     }
-    
+
     inet::UDPDataIndication* udpControlInfo = check_and_cast<inet::UDPDataIndication*>(msg->removeControlInfo());
     inet::L3Address srcAddr = udpControlInfo->getSrcAddr();
 
-    if (srcAddr.getPrefix(16) != inet::L3Address("192.168.0.0"))
+    if (strcmp(msg->getName(), "TMC registration") == 0)
+    {
         addresses.insert(srcAddr);
-
-    sendPacket(check_and_cast<cPacket*>(msg));
+        delete msg;
+    }
+    else
+        sendPacket(check_and_cast<cPacket*>(msg));
 
     delete udpControlInfo;
 }

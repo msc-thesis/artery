@@ -15,6 +15,9 @@ Define_Module(CarHybridReporter)
 
 void CarHybridReporter::initialize(int stage)
 {
+    if (stage == numInitStages() - 1)
+        registerToTMC();
+
     radioDriverIn = gate("radioDriverGate$i");
     radioDriverOut = gate("radioDriverGate$o");
     wlanIn = gate("wlanGate$i");
@@ -35,7 +38,7 @@ void CarHybridReporter::handleMessage(cMessage *msg) {
     if (msg->getArrivalGate() == radioDriverIn) {
         send(msg, wlanOut);
 
-        inet::IPv4ControlInfo* ipCtrl = new inet::IPv4ControlInfo();
+        /*inet::IPv4ControlInfo* ipCtrl = new inet::IPv4ControlInfo();
         ipCtrl->setDestAddr(inet::L3AddressResolver().resolve(par("centralAddress").stringValue()).toIPv4());
         ipCtrl->setProtocol(inet::IP_PROT_UDP);
         ipCtrl->setTimeToLive(10);
@@ -52,7 +55,7 @@ void CarHybridReporter::handleMessage(cMessage *msg) {
         packet->setDestinationPort(centralPort);
         packet->setControlInfo(ipCtrl);
         packet->encapsulate(check_and_cast<cPacket*>(ethCopy));
-        send(packet, lteOut);
+        send(packet, lteOut);*/
     } else if (msg->getArrivalGate() == wlanIn) {
         send(msg, radioDriverOut);
     } else if (msg->getArrivalGate() == lteIn) {
@@ -78,6 +81,19 @@ VanetRxControl* CarHybridReporter::txToRxControl(VanetTxControl* ctrl) {
     tmp->setDsap(ctrl->getDsap());
     tmp->setPauseUnits(ctrl->getPauseUnits());
     return tmp;
+}
+
+void CarHybridReporter::registerToTMC() {
+    inet::IPv4ControlInfo* ipCtrl = new inet::IPv4ControlInfo();
+    ipCtrl->setDestAddr(inet::L3AddressResolver().resolve(par("centralAddress").stringValue()).toIPv4());
+    ipCtrl->setProtocol(inet::IP_PROT_UDP);
+    ipCtrl->setTimeToLive(10);
+    
+    inet::UDPPacket* packet = new inet::UDPPacket();
+    packet->setDestinationPort(centralPort);
+    packet->setControlInfo(ipCtrl);
+    packet->encapsulate(new cPacket("TMC registration"));
+    send(packet, lteOut);
 }
 
 } // hybrid
