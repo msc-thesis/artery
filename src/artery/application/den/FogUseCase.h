@@ -1,6 +1,7 @@
 #ifndef ARTERY_DEN_FOGUSECASE
 #define ARTERY_DEN_FOGUSECASE
 
+#include <omnetpp.h>
 #include "artery/application/den/SuspendableUseCase.h"
 #include <vanetza/btp/data_request.hpp>
 #include "vanetza/asn1/its/ReferencePosition.h"
@@ -28,6 +29,12 @@ protected:
 private:
     bool mPendingSignal = false;
     std::vector<ReferencePosition_t> positions;
+
+    omnetpp::cOutVector vehicleLatitude;
+    omnetpp::cOutVector vehicleLongitude;
+    omnetpp::cOutVector eventLatitude;
+    omnetpp::cOutVector eventLongitude;
+
     void transmitMessage();
 };
 

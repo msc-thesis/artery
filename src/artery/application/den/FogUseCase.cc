@@ -82,6 +82,11 @@ FogUseCase::~FogUseCase()
 void FogUseCase::initialize(int stage)
 {
     UseCase::initialize(stage);
+
+    vehicleLatitude.setName("Vehicle latitude");
+    vehicleLongitude.setName("Vehicle longitude");
+    eventLatitude.setName("Event latitude");
+    eventLongitude.setName("Event longitude");
 }
 
 void FogUseCase::check()
@@ -105,17 +110,22 @@ void FogUseCase::indicate(const artery::DenmObject& denm)
     if (asn1->denm.situation->eventType.causeCode != CauseCodeType_adverseWeatherCondition_Visibility)
         return;
 
-    double vehicleLatitude = round(mVdp->latitude(), microdegree) * Latitude_oneMicrodegreeNorth / 10000000.0;
-    double vehicleLongitude = round(mVdp->longitude(), microdegree) * Longitude_oneMicrodegreeEast / 10000000.0;
-    double eventLatitude = asn1->denm.management.eventPosition.latitude / 10000000.0;
-    double eventLongitude = asn1->denm.management.eventPosition.longitude / 10000000.0;
+    double vLat = round(mVdp->latitude(), microdegree) * Latitude_oneMicrodegreeNorth / 10000000.0;
+    double vLon = round(mVdp->longitude(), microdegree) * Longitude_oneMicrodegreeEast / 10000000.0;
+    double eLat = asn1->denm.management.eventPosition.latitude / 10000000.0;
+    double eLon = asn1->denm.management.eventPosition.longitude / 10000000.0;
 
     if (contains(positions, asn1->denm.management.eventPosition))
         return;
 
     positions.push_back(asn1->denm.management.eventPosition);
+    
+    vehicleLatitude.record(vLat);
+    vehicleLongitude.record(vLon);
+    eventLatitude.record(eLat);
+    eventLongitude.record(eLon);
 
-    double dist = distance(vehicleLatitude, vehicleLongitude, eventLatitude, eventLongitude);
+    double dist = distance(vLat, vLon, eLat, eLon);
 
     if (dist > 500)
         printf("Dist: %f, I'm well informed\n", dist);
@@ -146,7 +156,8 @@ vanetza::asn1::Denm FogUseCase::createMessage()
 {
     auto msg = createMessageSkeleton();
     msg->denm.management.relevanceDistance = vanetza::asn1::allocate<RelevanceDistance_t>();
-    *msg->denm.management.relevanceDistance = RelevanceDistance_lessThan1000m;
+    // The distance within which the event is considered relevant to the receiving ITS-S 
+    *msg->denm.management.relevanceDistance = RelevanceDistance_lessThan5km;
     msg->denm.management.relevanceTrafficDirection = vanetza::asn1::allocate<RelevanceTrafficDirection_t>();
     *msg->denm.management.relevanceTrafficDirection = RelevanceTrafficDirection_allTrafficDirections;
     msg->denm.management.validityDuration = vanetza::asn1::allocate<ValidityDuration_t>();
@@ -177,7 +188,7 @@ vanetza::btp::DataRequestB FogUseCase::createRequest()
 
     geonet::Area destination;
     geonet::Circle shape;
-    shape.r = 1000.0 * meter;
+    shape.r = 1784.0 * meter;
     destination.shape = shape;
     destination.position.latitude = mVdp->latitude();
     destination.position.longitude = mVdp->longitude();
