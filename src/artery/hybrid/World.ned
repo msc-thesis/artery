@@ -12,7 +12,7 @@ network World extends artery.lte.World
     
     submodules:
         tmc: TMC {
-            @display("p=1600,400");
+            @display("p=500,4500");
         }
 
         rsu[numHybridRoadSideUnits]: RSU {
