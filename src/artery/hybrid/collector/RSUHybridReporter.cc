@@ -48,6 +48,8 @@ void RSUHybridReporter::handleMessage(cMessage *msg) {
             ethCopy->addObject(geoCtrl);
         }
 
+        ethCopy->addPar("LTE message");
+
         inet::UDPPacket* packet = new inet::UDPPacket("UDP from RSU");
         packet->setDestinationPort(centralPort);
         packet->setControlInfo(ipCtrl);

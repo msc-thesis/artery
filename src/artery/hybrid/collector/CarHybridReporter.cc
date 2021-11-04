@@ -59,7 +59,7 @@ void CarHybridReporter::handleMessage(cMessage *msg) {
     } else if (msg->getArrivalGate() == wlanIn) {
         send(msg, radioDriverOut);
     } else if (msg->getArrivalGate() == lteIn) {
-        VanetRxControl* ctrl = txToRxControl(check_and_cast<VanetTxControl*>(msg->getObject("")));
+        VanetRxControl* ctrl = txToRxControl(check_and_cast<VanetTxControl*>(msg->removeObject("")));
         cObject* tmp = msg->removeControlInfo();
         delete tmp;
         msg->setControlInfo(ctrl);
