@@ -31,3 +31,30 @@ build Artery:
 cmake --build .
 
 6 836 425
+
+## 2021-11-04
+
+Relevance distance and destination area are two different things:
+- Relevance distance: the distance, within which the information is
+    considered relevant. If a car is outside the relevance distance,
+    it will not process the related message.
+- Destination area: the area, where the information should be sent to.
+    A car can mark the intersection behind itself the destination area.
+    In this case, every car there will receive the message. But if the
+    Relevance distance is smaller than the car's distance to the destination
+    area, the message will be dropped.
+
+- The destination area has a maximum size: 10 km<sup>2</sup>
+- The area can have one of the following shapes:
+    + rectangle
+    + circle (max r: 1784 m)
+    + ellipse
+- The car is in the destination area by default
+    + The circle is drawn around it (ellipse too)
+    + When a rectangle is defined, a and b means how far the center of
+        the rectangle is from the edges.
+- This means that normally, the relevance distance is maximum 2.5 kms behind
+    the car (In case of a 5km x 2km large rectangle)
+- I calculated the direction of the car, negated it, and moved the destination
+    area back by 2.5 kms, so that the car is at the end of the rectangle.
+    This way the destination area is 2 km wide, and 5 km long behind the car.

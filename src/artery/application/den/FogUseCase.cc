@@ -24,6 +24,10 @@ double deg2rad(double deg)
     return deg / 180 * M_PI;
 }
 
+double rad2deg(double rad) {
+    return rad * 180 / M_PI;
+}
+
 // Distance between two points on the surface of earth according to the Haversine formula
 double distance(double lat1, double lon1, double lat2, double lon2)
 {
@@ -39,6 +43,34 @@ double distance(double lat1, double lon1, double lat2, double lon2)
     double d = R * c;
 
     return d;
+}
+
+vanetza::geonet::GeodeticPosition latLonInDirection(
+    double originalLatitude,
+    double originalLongitude,
+    double distance,
+    double direction
+)
+{
+    double R = 6371000;
+    double lat1 = deg2rad(originalLatitude);
+    double lon1 = deg2rad(originalLongitude);
+
+    double lat2 = asin(
+        sin(lat1) * cos(distance / R) +
+        cos(lat1) * sin(distance / R) *
+        cos(direction)
+    );
+    double lon2 = lon1 + atan2(
+        sin(direction) * sin(distance / R) * cos(lat1),
+        cos(distance / R) - sin(lat1) * sin(lat2)
+    );
+    lat2 = rad2deg(lat2);
+    lon2 = rad2deg(lon2);
+
+    vanetza::geonet::GeodeticPosition p(lat2 * vanetza::units::degree, lon2 * vanetza::units::degree);
+
+    return p;
 }
 
 bool contains(std::vector<ReferencePosition_t> container, ReferencePosition_t element)
@@ -187,11 +219,19 @@ vanetza::btp::DataRequestB FogUseCase::createRequest()
     request.gn.repetition = repetition;
 
     geonet::Area destination;
-    geonet::Circle shape;
-    shape.r = 1784.0 * meter;
+    geonet::Rectangle shape;
+    shape.a = 1000.0 * meter;
+    shape.b = 2500.0 * meter;
     destination.shape = shape;
-    destination.position.latitude = mVdp->latitude();
-    destination.position.longitude = mVdp->longitude();
+
+    vanetza::geonet::GeodeticPosition p = latLonInDirection(
+        mVdp->latitude().value(),
+        mVdp->longitude().value(),
+        2500,
+        mVdp->heading().value() + M_PI
+    );
+    destination.position.latitude = p.latitude;
+    destination.position.longitude = p.longitude;
     request.gn.destination = destination;
     request.gn.maximum_lifetime = geonet::Lifetime { geonet::Lifetime::Base::Ten_Seconds, 60 };
 
