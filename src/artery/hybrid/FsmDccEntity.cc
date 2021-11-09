@@ -1,4 +1,5 @@
 #include "artery/hybrid/FsmDccEntity.h"
+#include "artery/hybrid/AccessInterface.h"
 #include "artery/utility/InitStages.h"
 
 namespace artery
@@ -12,7 +13,7 @@ void HybridFsmDccEntity::initialize(int stage)
 
     if (stage == InitStages::Prepare)
     {
-        mAccessInterface.reset(new AccessInterface(gate("radioDriverData")));
+        mAccessInterface.reset(new HybridAccessInterface(gate("radioDriverData"), gate("LTEOut")));
     }
 }
 
