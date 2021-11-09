@@ -2,7 +2,7 @@ package artery.hybrid;
 
 import artery.networking.IPositionProvider;
 import artery.networking.IDccEntity;
-import artery.networking.Router;
+import artery.hybrid.networking.HybridRouter;
 import artery.networking.Runtime;
 
 module Vanetza
@@ -32,7 +32,7 @@ module Vanetza
             @display("p=250,150;i=device/firewall");
         }
 
-        router: Router {
+        router: HybridRouter {
             @display("p=150,150;i=block/routing");
         }
 

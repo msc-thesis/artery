@@ -149,6 +149,7 @@ if(TARGET lte)
     hybrid/collector/CarHybridReporter.cc
     hybrid/networking/AccessInterface.cc
     hybrid/networking/FsmDccEntity.cc
+    hybrid/networking/Router.cc
     application/TestService.cc
     application/TestServiceStoryboard.cc
     )
