@@ -1,5 +1,5 @@
-#include "artery/hybrid/FsmDccEntity.h"
-#include "artery/hybrid/AccessInterface.h"
+#include "artery/hybrid/networking/FsmDccEntity.h"
+#include "artery/hybrid/networking/AccessInterface.h"
 #include "artery/utility/InitStages.h"
 
 namespace artery

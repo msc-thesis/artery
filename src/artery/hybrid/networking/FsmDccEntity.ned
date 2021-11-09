@@ -1,4 +1,4 @@
-package artery.hybrid;
+package artery.hybrid.networking;
 
 simple HybridFsmDccEntity extends artery.networking.FsmDccEntity
 {

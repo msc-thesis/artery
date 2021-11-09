@@ -1,4 +1,4 @@
-#include "artery/hybrid/AccessInterface.h"
+#include "artery/hybrid/networking/AccessInterface.h"
 #include "artery/networking/GeoNetPacket.h"
 #include "artery/networking/GeoNetRequest.h"
 #include <omnetpp/csimplemodule.h>
