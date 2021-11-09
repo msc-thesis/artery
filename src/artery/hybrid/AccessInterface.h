@@ -18,6 +18,7 @@ class HybridAccessInterface : public AccessInterface
 {
 public:
     HybridAccessInterface(omnetpp::cGate*, omnetpp::cGate*);
+    void requestLTE(const vanetza::access::DataRequest&, std::unique_ptr<vanetza::ChunkPacket>);
 
 private:
     omnetpp::cGate* mGateLTEOut;

@@ -20,7 +20,7 @@ public:
     AccessInterface(omnetpp::cGate*);
     void request(const vanetza::access::DataRequest&, std::unique_ptr<vanetza::ChunkPacket>) override;
 
-private:
+protected:
     omnetpp::cGate* mGateOut;
     omnetpp::cSimpleModule* mModuleOut;
 };
