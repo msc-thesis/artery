@@ -11,4 +11,5 @@ module RSUHybridReporter
         inout radioDriverGate;
         inout wlanGate;
         output ethOut;
+        input LTEIn;
 }

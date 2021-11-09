@@ -121,4 +121,6 @@ module RSU like INetworkNode
             eth[i].upperLayerOut --> networkLayer.ifIn++;
             eth[i].upperLayerIn <-- networkLayer.ifOut++;
         }
+
+        vanetza.LTEOut --> hybridReporter.LTEIn;
 }
