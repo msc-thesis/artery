@@ -17,13 +17,14 @@ module Vanetza
     gates:
         inout radioDriverData;
         input radioDriverProperties;
+        output LTEOut;
 
     submodules:
         position: <default("VehiclePositionProvider")> like IPositionProvider {
             @display("p=150,50;i=misc/globe");
         }
 
-        dcc: <default("FsmDccEntity")> like IDccEntity {
+        dcc: <default("HybridFsmDccEntity")> like IDccEntity {
             @display("p=50,150;i=block/buffer");
         }
 
@@ -43,4 +44,6 @@ module Vanetza
         radioDriverData$i --> router.radioDriverData;
         radioDriverData$o <-- dcc.radioDriverData;
         radioDriverProperties --> router.radioDriverProperties;
+
+        LTEOut <-- dcc.LTEOut;
 }
