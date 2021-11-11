@@ -150,6 +150,7 @@ if(TARGET lte)
     hybrid/networking/AccessInterface.cc
     hybrid/networking/FsmDccEntity.cc
     hybrid/networking/Router.cc
+    hybrid/networking/router.cpp
     application/TestService.cc
     application/TestServiceStoryboard.cc
     )

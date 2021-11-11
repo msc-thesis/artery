@@ -1,4 +1,5 @@
 #include "artery/hybrid/networking/Router.h"
+#include "artery/hybrid/networking/router.hpp"
 #include "artery/application/Middleware.h"
 #include "artery/utility/InitStages.h"
 #include "artery/utility/PointerCheck.h"
@@ -39,7 +40,7 @@ void HybridRouter::initialize(int stage)
     if (stage == InitStages::Self) {
         // basic router setup
         auto runtime = inet::getModuleFromPar<Runtime>(par("runtimeModule"), this);
-        mRouter.reset(new vanetza::geonet::Router(*runtime, mMIB));
+        mRouter.reset(new vanetza::geonet::HybridRouter(*runtime, mMIB));
         vanetza::MacAddress init_mac = vanetza::create_mac_address(getId());
         mRouter->set_address(generateAddress(init_mac));
 
