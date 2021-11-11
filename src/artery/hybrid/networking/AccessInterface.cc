@@ -1,6 +1,7 @@
 #include "artery/hybrid/networking/AccessInterface.h"
 #include "artery/networking/GeoNetPacket.h"
 #include "artery/networking/GeoNetRequest.h"
+#include "artery/utility/PointerCheck.h"
 #include <omnetpp/csimplemodule.h>
 
 using vanetza::access::DataRequest;
@@ -11,7 +12,7 @@ namespace artery
 
 HybridAccessInterface::HybridAccessInterface(omnetpp::cGate* gate, omnetpp::cGate* gateLTE) :
     AccessInterface(gate),
-    mGateLTEOut(gateLTE)
+    mGateLTEOut(notNullPtr(gateLTE))
 {
 }
 
