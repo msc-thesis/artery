@@ -49,10 +49,12 @@ void RsuDenService::indicate(const vanetza::btp::DataIndication& indication, std
 {
     Asn1PacketVisitor<vanetza::asn1::Denm> visitor;
     const vanetza::asn1::Denm* denm = boost::apply_visitor(visitor, *packet);
-    vanetza::asn1::Denm den = vanetza::asn1::Denm(*denm);
 
     if (denm)
     {
+        vanetza::asn1::Denm den = vanetza::asn1::Denm(*denm);
+        vanetza::asn1::Denm lteDen = vanetza::asn1::Denm(*denm);
+
         DenmObject obj = visitor.shared_wrapper;
         const vanetza::asn1::Denm& asn1 = obj.asn1();
 
@@ -62,7 +64,10 @@ void RsuDenService::indicate(const vanetza::btp::DataIndication& indication, std
         positions.push_back(asn1->denm.management.eventPosition);
 
         vanetza::btp::DataRequestB request = createRequest(indication, asn1);
+        vanetza::btp::DataRequestB lteRequest = createRequest(indication, asn1, true);
+
         sendDenm(std::move(den), request);
+        sendDenm(std::move(lteDen), lteRequest);
     }
 }
 
@@ -80,7 +85,10 @@ void RsuDenService::sendDenm(vanetza::asn1::Denm&& message, vanetza::btp::DataRe
     this->request(request, std::move(payload));
 }
 
-vanetza::btp::DataRequestB RsuDenService::createRequest(const vanetza::btp::DataIndication& indication, const vanetza::asn1::Denm& asn1)
+vanetza::btp::DataRequestB RsuDenService::createRequest(
+    const vanetza::btp::DataIndication& indication,
+    const vanetza::asn1::Denm& asn1,
+    bool lteRequest)
 {
     namespace geonet = vanetza::geonet;
     using vanetza::units::si::seconds;
@@ -97,8 +105,16 @@ vanetza::btp::DataRequestB RsuDenService::createRequest(const vanetza::btp::Data
 
     geonet::Area destination;
     geonet::Rectangle shape;
+
     shape.a = 1000.0 * meter;
     shape.b = 2500.0 * meter;
+
+    if (lteRequest)
+    {
+        shape.a = 10000.0 * meter;
+        shape.b = 10000.0 * meter;
+    }
+
     destination.shape = shape;
 
     ReferencePosition_t position = asn1->denm.management.eventPosition;

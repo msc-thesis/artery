@@ -6,6 +6,7 @@
 #include <vanetza/geonet/dcc_field_generator.hpp>
 #include <vanetza/geonet/next_hop.hpp>
 #include <vanetza/geonet/pdu_conversion.hpp>
+#include <boost/variant.hpp>
 
 namespace vanetza
 {
@@ -82,6 +83,7 @@ using PendingPacketGbc = PendingPacket<GbcPdu>;
 
 HybridRouter::HybridRouter(Runtime& rt, const MIB& mib) : Router(rt, mib)
 {
+    LTEOnly = false;
 }
 
 DataConfirm HybridRouter::request(const ShbDataRequest& request, DownPacketPtr payload)
@@ -90,66 +92,82 @@ DataConfirm HybridRouter::request(const ShbDataRequest& request, DownPacketPtr p
     result ^= validate_data_request(request, m_mib);
     result ^= validate_payload(payload, m_mib);
 
-    if (result.accepted()) {
-        using PendingPacket = PendingPacket<ShbPdu>;
+    if (!result.accepted())
+        return result;
+    
+    using PendingPacket = PendingPacket<ShbPdu>;
 
-        // step 4: set up packet repetition (NOTE 4 on page 57 requires re-execution of source operations)
-        if (request.repetition) {
-            // plaintext payload needs to get passed
-            m_repeater.add(request, *payload);
+    // step 4: set up packet repetition (NOTE 4 on page 57 requires re-execution of source operations)
+    if (request.repetition) {
+        // plaintext payload needs to get passed
+        m_repeater.add(request, *payload);
+    }
+
+    // step 1: create PDU
+    auto pdu = create_shb_pdu(request);
+    pdu->common().payload = payload->size();
+
+    ControlInfo ctrl(request);
+    auto transmit = [this, ctrl](PendingPacket::Packet&& packet) {
+        std::unique_ptr<ShbPdu> pdu;
+        std::unique_ptr<DownPacket> payload;
+        std::tie(pdu, payload) = std::move(packet);
+
+        // update SO PV before actual transmission
+        pdu->extended().source_position = m_local_position_vector;
+
+        // step 2: encapsulate packet by security
+        if (m_mib.itsGnSecurity) {
+            payload = encap_packet(ctrl.its_aid, *pdu, std::move(payload));
         }
 
-        // step 1: create PDU
-        auto pdu = create_shb_pdu(request);
-        pdu->common().payload = payload->size();
+        // step 5: execute media-dependent procedures
+        execute_media_procedures(ctrl.communication_profile);
 
-        ControlInfo ctrl(request);
-        auto transmit = [this, ctrl](PendingPacket::Packet&& packet) {
-            std::unique_ptr<ShbPdu> pdu;
-            std::unique_ptr<DownPacket> payload;
-            std::tie(pdu, payload) = std::move(packet);
+        // step 6: pass packet down to link layer with broadcast destination
+        pass_down(cBroadcastMacAddress, std::move(pdu), std::move(payload));
 
-            // update SO PV before actual transmission
-            pdu->extended().source_position = m_local_position_vector;
+        // step 7: reset beacon timer
+        reset_beacon_timer();
+    };
 
-            // step 2: encapsulate packet by security
-            if (m_mib.itsGnSecurity) {
-                payload = encap_packet(ctrl.its_aid, *pdu, std::move(payload));
-            }
+    PendingPacket packet(std::make_tuple(std::move(pdu), std::move(payload)), transmit);
 
-            // step 5: execute media-dependent procedures
-            execute_media_procedures(ctrl.communication_profile);
-
-            // step 6: pass packet down to link layer with broadcast destination
-            pass_down(cBroadcastMacAddress, std::move(pdu), std::move(payload));
-
-            // step 7: reset beacon timer
-            reset_beacon_timer();
-        };
-
-        PendingPacket packet(std::make_tuple(std::move(pdu), std::move(payload)), transmit);
-
-        // step 3: store & carry forwarding
-        if (request.traffic_class.store_carry_forward() && !m_location_table.has_neighbours()) {
-            PacketBuffer::data_ptr data { new PendingPacketBufferData<ShbPdu>(std::move(packet)) };
-            m_bc_forward_buffer.push(std::move(data), m_runtime.now());
-        } else {
-            // tranmsit immediately
-            packet.process();
-        }
+    // step 3: store & carry forwarding
+    if (request.traffic_class.store_carry_forward() && !m_location_table.has_neighbours()) {
+        PacketBuffer::data_ptr data { new PendingPacketBufferData<ShbPdu>(std::move(packet)) };
+        m_bc_forward_buffer.push(std::move(data), m_runtime.now());
+    } else {
+        // tranmsit immediately
+        packet.process();
     }
 
     return result;
 }
 
-DataConfirm HybridRouter::request(const GbcDataRequest& request, DownPacketPtr payload)
+DataConfirm HybridRouter::request(const GbcDataRequest& oldRequest, DownPacketPtr payload)
 {
+    using vanetza::units::si::meter;
     DataConfirm result;
-    result ^= validate_data_request(request, m_mib);
     result ^= validate_payload(payload, m_mib);
 
     if (!result.accepted())
         return result;
+
+    result = validate_data_request(oldRequest, m_mib);
+
+    GbcDataRequest request = oldRequest;
+
+    if (!result.accepted()) {
+        result = DataConfirm::ResultCode::Accepted;
+        LTEOnly = true;
+
+        Rectangle shape;
+        shape.a = 10000.0 * meter;
+        shape.b = 10000.0 * meter;
+
+        request.destination.shape = shape;
+    }
 
     // step 6: set up packet repetition
     // packet repetition is done first because of "NOTE 2" on page 60:
@@ -232,7 +250,14 @@ void HybridRouter::pass_down(const dcc::DataRequest& request, PduPtr pdu, DownPa
 
     (*payload)[OsiLayer::Network] = ByteBufferConvertible(std::move(pdu));
     assert(m_request_interface);
-    m_request_interface->request(request, std::move(payload));
+
+    if (LTEOnly)
+    {
+        m_request_interface->requestLTE(request, std::move(payload));
+        LTEOnly = false;
+    }
+    else
+        m_request_interface->request(request, std::move(payload));
 }
 
 void HybridRouter::pass_down(const MacAddress& addr, PduPtr pdu, DownPacketPtr payload)

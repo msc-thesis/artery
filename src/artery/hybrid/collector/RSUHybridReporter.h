@@ -24,6 +24,7 @@ private:
     omnetpp::cGate* radioDriverOut;
     omnetpp::cGate* wlanIn;
     omnetpp::cGate* wlanOut;
+    omnetpp::cGate* ethIn;
     omnetpp::cGate* ethOut;
     int centralPort;
 };

@@ -39,6 +39,11 @@ public:
      */
     void request(const DataRequest&, std::unique_ptr<ChunkPacket>) override;
     void requestLTE(const DataRequest&, std::unique_ptr<ChunkPacket>) override;
+
+private:
+    void transmit(const DataRequest&, std::unique_ptr<ChunkPacket>) override;
+
+    bool LTEOnly;
 };
 
 } // namespace dcc

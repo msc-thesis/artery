@@ -20,6 +20,7 @@ void RSUHybridReporter::initialize(int stage)
     radioDriverOut = gate("radioDriverGate$o");
     wlanIn = gate("wlanGate$i");
     wlanOut = gate("wlanGate$o");
+    ethIn = gate("LTEIn");
     ethOut = gate("ethOut");
     centralPort = par("centralPort");
 }
@@ -57,6 +58,7 @@ void RSUHybridReporter::handleMessage(cMessage *msg) {
         send(packet, ethOut);
     } else if (msg->getArrivalGate() == wlanIn) {
         send(msg, radioDriverOut);
+    } else if (msg->getArrivalGate() == ethIn) {
     } else {
         delete msg;
     }

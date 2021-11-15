@@ -19,6 +19,8 @@ class HybridRouter : public Router
     private:
         void pass_down(const dcc::DataRequest&, PduPtr, DownPacketPtr) override;
         void pass_down(const MacAddress&, PduPtr, DownPacketPtr) override;
+
+        bool LTEOnly;
 };
 
 } // namespace geonet

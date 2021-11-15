@@ -29,7 +29,7 @@ class RsuDenService : public ItsG5BaseService
         void sendDenm(vanetza::asn1::Denm&&, vanetza::btp::DataRequestB&);
 
     private:
-        vanetza::btp::DataRequestB createRequest(const vanetza::btp::DataIndication&, const vanetza::asn1::Denm&);
+        vanetza::btp::DataRequestB createRequest(const vanetza::btp::DataIndication&, const vanetza::asn1::Denm&, bool = false);
         void fillRequest(vanetza::btp::DataRequestB&);
 
         std::vector<ReferencePosition_t> positions;
