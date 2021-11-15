@@ -49,8 +49,6 @@ void RSUHybridReporter::handleMessage(cMessage *msg) {
             ethCopy->addObject(geoCtrl);
         }
 
-        ethCopy->addPar("LTE message");
-
         inet::UDPPacket* packet = new inet::UDPPacket("UDP from RSU");
         packet->setDestinationPort(centralPort);
         packet->setControlInfo(ipCtrl);
@@ -59,6 +57,20 @@ void RSUHybridReporter::handleMessage(cMessage *msg) {
     } else if (msg->getArrivalGate() == wlanIn) {
         send(msg, radioDriverOut);
     } else if (msg->getArrivalGate() == ethIn) {
+        inet::IPv4ControlInfo* ipCtrl = new inet::IPv4ControlInfo();
+        ipCtrl->setDestAddr(inet::L3AddressResolver().resolve(par("centralAddress").stringValue()).toIPv4());
+        ipCtrl->setProtocol(inet::IP_PROT_UDP);
+        ipCtrl->setTimeToLive(10);
+        msg->setName("GeoNet from RSU");
+
+        VanetTxControl* geoCtrl = check_and_cast<VanetTxControl*>(msg->removeControlInfo());
+        msg->addObject(geoCtrl);
+
+        inet::UDPPacket* packet = new inet::UDPPacket("UDP from RSU");
+        packet->setDestinationPort(centralPort);
+        packet->setControlInfo(ipCtrl);
+        packet->encapsulate(check_and_cast<cPacket*>(msg));
+        send(packet, ethOut);
     } else {
         delete msg;
     }

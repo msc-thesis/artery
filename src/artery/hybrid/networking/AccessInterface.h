@@ -21,6 +21,8 @@ public:
     void requestLTE(const vanetza::access::DataRequest&, std::unique_ptr<vanetza::ChunkPacket>);
 
 private:
+    void handleDataRequest(omnetpp::cMessage* packet);
+
     omnetpp::cGate* mGateLTEOut;
 };
 

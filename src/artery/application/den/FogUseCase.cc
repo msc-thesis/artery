@@ -172,6 +172,9 @@ void FogUseCase::transmitMessage()
 
     auto denm = createMessage();
     auto request = createRequest();
+
+    positions.push_back(denm->denm.management.eventPosition);
+
     mService->sendDenm(std::move(denm), request);
 }
 
