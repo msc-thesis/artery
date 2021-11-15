@@ -58,3 +58,7 @@ Relevance distance and destination area are two different things:
 - I calculated the direction of the car, negated it, and moved the destination
     area back by 2.5 kms, so that the car is at the end of the rectangle.
     This way the destination area is 2 km wide, and 5 km long behind the car.
+
+## 2021-11-15
+
+`python sumo/tools/randomTrips.py -n artery/scenarios/hybrid/mzero.net.xml -e 600 --route-file artery/scenarios/hybrid/mzero.rou.xml --validate`
