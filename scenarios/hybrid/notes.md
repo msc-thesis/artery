@@ -62,3 +62,13 @@ Relevance distance and destination area are two different things:
 ## 2021-11-15
 
 `python sumo/tools/randomTrips.py -n artery/scenarios/hybrid/mzero.net.xml -e 600 --route-file artery/scenarios/hybrid/mzero.rou.xml --validate`
+
+## 2021-11-16
+
+TMC
+- every car that enters the simulation must register itself to the TMC
+- they send a "TMC registration" message to a predefined address
+- TMC saves their address in a set, and send an "ACK" message
+- Cars try to register as long as they do not receive the ACK
+- When ACK is received, they stop the attempts
+- Everything happens over UDP
