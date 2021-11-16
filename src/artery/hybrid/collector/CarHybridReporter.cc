@@ -15,6 +15,8 @@ Define_Module(CarHybridReporter)
 
 void CarHybridReporter::initialize(int stage)
 {
+    registeredToTMC = false;
+
     if (stage == numInitStages() - 1)
         registerToTMC();
 
@@ -35,6 +37,9 @@ int CarHybridReporter::numInitStages() const
 void CarHybridReporter::finish() {}
 
 void CarHybridReporter::handleMessage(cMessage *msg) {
+    if (!registeredToTMC && checkRegistration(msg))
+        return;
+    
     if (msg->getArrivalGate() == radioDriverIn) {
         send(msg, wlanOut);
 
@@ -94,6 +99,18 @@ void CarHybridReporter::registerToTMC() {
     packet->setControlInfo(ipCtrl);
     packet->encapsulate(new cPacket("TMC registration"));
     send(packet, lteOut);
+}
+
+bool CarHybridReporter::checkRegistration(omnetpp::cMessage* msg)
+{
+    if (strcmp(msg->getName(), "ACK") == 0) {
+        registeredToTMC = true;
+        return true;
+    } else {
+        registerToTMC();
+        return false;
+    }
+    
 }
 
 } // hybrid

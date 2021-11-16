@@ -20,6 +20,7 @@ class HybridSender : public cSimpleModule
     inet::L3AddressResolver* resolver;
 
     void sendPacket(cPacket* packet);
+    void ackRegistration(inet::L3Address);
 
   protected:
     virtual int numInitStages() const { return inet::NUM_INIT_STAGES; }

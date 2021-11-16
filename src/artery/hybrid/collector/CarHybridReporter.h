@@ -30,8 +30,10 @@ private:
     omnetpp::cGate* lteIn;
     omnetpp::cGate* lteOut;
     int centralPort;
+    bool registeredToTMC;
 
     void registerToTMC();
+    bool checkRegistration(omnetpp::cMessage *msg);
 };
 
 } // hybrid

@@ -47,6 +47,7 @@ void HybridSender::handleMessage(cMessage *msg)
     if (strcmp(msg->getName(), "TMC registration") == 0)
     {
         addresses.insert(srcAddr);
+        ackRegistration(srcAddr);
         delete msg;
     }
     else
@@ -68,6 +69,12 @@ void HybridSender::sendPacket(cPacket* packet)
         }
     }
     delete packet;
+}
+
+void HybridSender::ackRegistration(inet::L3Address address)
+{
+    cPacket* ack = new cPacket("ACK");
+    socket.sendTo(ack, address, destPort_);
 }
 
 } // artery
