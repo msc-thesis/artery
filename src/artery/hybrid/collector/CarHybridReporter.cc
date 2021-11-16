@@ -37,7 +37,7 @@ int CarHybridReporter::numInitStages() const
 void CarHybridReporter::finish() {}
 
 void CarHybridReporter::handleMessage(cMessage *msg) {
-    if (!registeredToTMC && checkRegistration(msg))
+    if (checkRegistration(msg))
         return;
     
     if (msg->getArrivalGate() == radioDriverIn) {
@@ -105,9 +105,11 @@ bool CarHybridReporter::checkRegistration(omnetpp::cMessage* msg)
 {
     if (strcmp(msg->getName(), "ACK") == 0) {
         registeredToTMC = true;
+        delete msg;
         return true;
     } else {
-        registerToTMC();
+        if (!registeredToTMC)
+            registerToTMC();
         return false;
     }
     
