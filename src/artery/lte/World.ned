@@ -41,7 +41,7 @@ network World extends artery.inet.World
 
         pgw: PgwStandardSimplified {
             parameters:
-                @display("p=8500,500");
+                @display("p=8000,500");
                 nodeType = "PGW";
         }
 
