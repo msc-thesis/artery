@@ -5,7 +5,7 @@ import artery.hybrid.collector.CarHybridReporter;
 module Car extends artery.lte.Car
 {
     parameters:
-        @display("r=1000");
+        @display("r=500");
 
     submodules:
         hybridReporter: CarHybridReporter {

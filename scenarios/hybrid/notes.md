@@ -72,3 +72,5 @@ TMC
 - Cars try to register as long as they do not receive the ACK
 - When ACK is received, they stop the attempts
 - Everything happens over UDP
+
+b /home/rico/MSc-diploma-project/artery/extern/inet/src/inet/linklayer/ieee80211/mac/coordinationfunction/Hcf.cc:145
