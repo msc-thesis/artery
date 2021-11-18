@@ -1,12 +1,7 @@
 #ifndef _LTE_HybridReceiver_H_
 #define _LTE_HybridReceiver_H_
 
-#include <string.h>
-#include <omnetpp.h>
-
 #include "inet/transportlayer/contract/udp/UDPSocket.h"
-#include "inet/transportlayer/udp/UDPPacket.h"
-#include <list>
 
 namespace artery
 {
