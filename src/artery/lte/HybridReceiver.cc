@@ -1,5 +1,4 @@
 #include "artery/lte/HybridReceiver.h"
-#include "artery/networking/GeoNetPacket.h"
 
 namespace artery
 {

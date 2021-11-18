@@ -1,12 +1,8 @@
 #ifndef _LTE_HybridSender_H_
 #define _LTE_HybridSender_H_
 
-#include <string.h>
-#include <omnetpp.h>
-
 #include "inet/transportlayer/contract/udp/UDPSocket.h"
 #include "inet/networklayer/common/L3AddressResolver.h"
-#include "artery/networking/GeoNetPacket.h"
 
 namespace artery
 {
