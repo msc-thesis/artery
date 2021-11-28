@@ -15,7 +15,7 @@ import artery.hybrid.collector.RSUHybridReporter;
 module RSU like INetworkNode
 {
     parameters:
-        @display("i=block/wrxtx;is=vs");
+        @display("i=block/wrxtx;is=vs;r=500");
         @networkNode;
         @labels(node,ethernet-node,wireless-node);
         int numRadios = default(1);
